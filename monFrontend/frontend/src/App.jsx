@@ -1,13 +1,21 @@
-import './index.css';
+//import './index.css';
+//import Login from './pages/Login';
+import CategorieList from './components/categorie';
+import CategorieForm from './components/categoriefor';
+import ProduitList from './pages/produitList';
+//import './App.css';
+//import CategorieList from './components/categorie';
 function App() {
 
   return (
     
-     <div className='bg-black'>
-      <h1 className='text-6xl text-center text-blue-400'>hello world why like</h1>
+     <div>
+      <CategorieList />
+      <CategorieForm />
+      <ProduitList />
      </div>
     
   )
 }
 
-export default App
+export default App;
