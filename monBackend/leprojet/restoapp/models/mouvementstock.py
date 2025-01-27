@@ -3,16 +3,16 @@ from .produit import Produit
 from .rapport import Rapport
 
 class MouvementStock(models.Model):
-    idmouvement = models.BigAutoField(db_column='idMouvement', primary_key=True)  # Field name made lowercase.
-    idproduit = models.ForeignKey(Produit, models.DO_NOTHING, db_column='idProduit')  # Field name made lowercase.
+    idMouvement = models.BigAutoField(db_column='idMouvement', primary_key=True)  # Field name made lowercase.
+    idProduit = models.ForeignKey(Produit, models.DO_NOTHING, db_column='idProduit')  # Field name made lowercase.
     quantite = models.DecimalField(max_digits=10, decimal_places=2)
-    datemouvement = models.DateTimeField()
-    estsortie = models.IntegerField()
-    idrapport = models.ForeignKey(Rapport, models.DO_NOTHING, db_column='idRapport')  # Field name made lowercase.
+    dateMouvement = models.DateTimeField()
+    estSortie = models.IntegerField()
+    idRapport = models.ForeignKey(Rapport, models.DO_NOTHING, db_column='idRapport')  # Field name made lowercase.
     
     @property
     def get_estsortie(self):
-        return self.estsortie == 1
+        return self.estSortie == 1
     
     @property
     def get_quantite_mouve(self):

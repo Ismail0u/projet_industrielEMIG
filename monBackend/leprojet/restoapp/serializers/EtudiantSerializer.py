@@ -3,7 +3,7 @@ from ..models.etudiant import Etudiant
 
 class EtudiantSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(read_only=True)
-    areserver = serializers.BooleanField(read_only=True)
+    #areserver = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Etudiant
@@ -11,6 +11,6 @@ class EtudiantSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['full_name'] = instance.get_fullName()
-        representation['areserver'] = instance.existe_reserv_pour_periode_date()
+        representation['full_name'] = instance.get_fullName
+        #representation['areserver'] = instance.existe_reserv_pour_periode_date
         return representation

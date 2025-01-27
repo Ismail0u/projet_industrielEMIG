@@ -11,6 +11,6 @@ class MouvementStockSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['is_outgoing'] = instance.get_estsortie()
-        representation['total_quantity'] = instance.get_quantite_mouve()
+        representation['is_outgoing'] = instance.get_estsortie
+        representation['total_quantity'] = instance.get_quantite_mouve
         return representation

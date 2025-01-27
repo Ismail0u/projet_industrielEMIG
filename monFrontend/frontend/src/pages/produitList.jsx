@@ -12,7 +12,7 @@ const ProduitList = () => {
                 const data = await produitService.get();
                 console.log('Data received in ProduitList:', data); // Ajout d'un log pour vérifier les données reçues
                 setProduits(data);
-                setCriticalProducts(data.filter(produit => produit.quantitedisponible <= produit.seuilcritique).length);
+                setCriticalProducts(data.filter(produit => produit.is_critical).length);
                 setLastUpdate(new Date().toLocaleDateString());
             } catch (error) {
                 console.error('Erreur lors de la récupération des produits', error);
@@ -42,12 +42,12 @@ const ProduitList = () => {
                 </thead>
                 <tbody>
                     {produits.map(produit => (
-                        <tr key={produit.idproduit}>
-                            <td>{produit.idproduit}</td>
-                            <td>{produit.nomproduit}</td>
-                            <td>{produit.idcategorie}</td>
-                            <td>{new Date(produit.dateajout).toLocaleDateString()}</td>
-                            <td>{produit.quantitedisponible}</td>
+                        <tr key={produit.idProduit}>
+                            <td>{produit.idProduit}</td>
+                            <td>{produit.nomProduit}</td>
+                            <td>{produit.idCategorie}</td>
+                            <td>{new Date(produit.dateAjout).toLocaleDateString()}</td>
+                            <td>{produit.quantiteDisponible}</td>
                             <td>{produit.etat}</td>
                         </tr>
                     ))}

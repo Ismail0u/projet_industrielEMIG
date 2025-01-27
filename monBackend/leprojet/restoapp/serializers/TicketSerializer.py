@@ -10,5 +10,5 @@ class TicketSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['prix'] = instance.get_prix()
+        representation['prix'] = instance.get_prix
         return representation
