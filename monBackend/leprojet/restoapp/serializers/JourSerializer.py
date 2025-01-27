@@ -10,5 +10,5 @@ class JourSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['total_reservations'] = instance.get_nbre_reserve_jour()
+        representation['total_reservations'] = instance.get_nbre_reserve_jour
         return representation

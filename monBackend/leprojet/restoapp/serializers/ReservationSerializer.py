@@ -11,6 +11,6 @@ class ReservationSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['etudiant'] = instance.get_etudiant()
-        representation['jour'] = instance.get_jour()
+        #representation['etudiant'] = instance.get_etudiant()
+        #representation['jour'] = instance.get_jour()
         return representation

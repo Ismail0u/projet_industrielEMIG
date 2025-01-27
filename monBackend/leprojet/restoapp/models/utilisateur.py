@@ -18,7 +18,7 @@ class UtilisateurManager(BaseUserManager):
         return self.create_user(email, motpasse, **extra_fields)
 
 class Utilisateur(AbstractBaseUser):
-    idutilisateur = models.AutoField(db_column='idUtilisateur', primary_key=True)
+    idUtilisateur = models.AutoField(db_column='idUtilisateur', primary_key=True)
     nom = models.CharField(max_length=20, blank=True, null=True)
     prenom = models.CharField(max_length=20)
     password = models.CharField(db_column='motPasse', max_length=255)
@@ -42,7 +42,7 @@ class Utilisateur(AbstractBaseUser):
     
     def get_rapport(self):
         from .rapport import Rapport
-        return Rapport.objects.filter(idutilisateur=self)
+        return Rapport.objects.filter(idUtilisateur=self)
     
     def reset_password(self, motpasse):
         self.set_password(motpasse)
