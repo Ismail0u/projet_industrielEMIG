@@ -1,39 +1,43 @@
 import React, { useState } from "react";
-import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";// Icônes pour les flèches
+import { ChevronLeft, ChevronRight, ChevronDown, Pencil } from "lucide-react";
 
-const DataTable = ({ data }) => {
+const DataTable = ({ data, editableColumns,rowsPerPage }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [editableData, setEditableData] = useState(data); // Données modifiables
+  const [editingCell, setEditingCell] = useState(null); // Suivi de la cellule en édition
 
-  const rowsPerPage = 8; // Nombre de lignes par page
 
-  // Filtrer les données en fonction de la recherche
-  const filteredData = data.filter(
-    (item) =>
-      item.col1.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.col2.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.col3.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.col4.toLowerCase().includes(searchTerm.toLowerCase())
+  const columns = data.length > 0 ? Object.keys(data[0]) : [];
+  const today = new Date().toISOString().split("T")[0];
+
+  const filteredData = editableData.filter((item) =>
+    columns.some((col) =>
+      String(item[col]).toLowerCase().includes(searchTerm.toLowerCase())
+    )
   );
 
-  // Trier les données
   const sortedData = sortBy
     ? [...filteredData].sort((a, b) => (a[sortBy] > b[sortBy] ? 1 : -1))
     : filteredData;
 
-  const totalPages = Math.ceil(sortedData.length / rowsPerPage); // Nombre total de pages
-
-  // Obtenir les données de la page actuelle
+  const totalPages = Math.ceil(sortedData.length / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedData = sortedData.slice(startIndex, startIndex + rowsPerPage);
 
+  // Fonction pour modifier une cellule
+  const handleCellChange = (rowIndex, colName, value) => {
+    const updatedData = [...editableData];
+    updatedData[rowIndex][colName] = value;
+    setEditableData(updatedData);
+  };
+
   return (
     <div className="p-4 bg-white rounded-lg">
-      {/* Barre de recherche et boutons */}
+      {/* Barre de recherche */}
       <div className="flex justify-between items-center mb-4">
-        {/* Barre de recherche */}
         <input
           type="text"
           placeholder="Rechercher..."
@@ -41,53 +45,34 @@ const DataTable = ({ data }) => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-
         <div className="flex gap-2">
-          {/* Bouton Trier par */}
           <div className="relative">
-  <button
-    className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
-    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-  >
-    Trier par
-    <ChevronDown className="w-4 h-4" />
-  </button>
+            <button
+              className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              Trier par
+              <ChevronDown className="w-4 h-4" />
+            </button>
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-300 rounded-md shadow-lg">
-                <button
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                  onClick={() => {
-                    setSortBy("col1");
-                    setIsDropdownOpen(false);
-                  }}
-                >
-                  Colonne 1
-                </button>
-                <button
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                  onClick={() => {
-                    setSortBy("col2");
-                    setIsDropdownOpen(false);
-                  }}
-                >
-                  Colonne 2
-                </button>
-                <button
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                  onClick={() => {
-                    setSortBy("col3");
-                    setIsDropdownOpen(false);
-                  }}
-                >
-                  Colonne 3
-                </button>
+                {columns.map((col) => (
+                  <button
+                    key={col}
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                    onClick={() => {
+                      setSortBy(col);
+                      setIsDropdownOpen(false);
+                    }}
+                  >
+                    {col}
+                  </button>
+                ))}
               </div>
             )}
           </div>
-
-          {/* Bouton Imprimer */}
           <button
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             onClick={() => window.print()}
           >
             Imprimer
@@ -95,30 +80,54 @@ const DataTable = ({ data }) => {
         </div>
       </div>
 
-      {/* Tableau */}
+      {/* Tableau dynamique */}
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse border border-gray-300">
+        <table className="w-full border-collapse border border-gray-300 table-fixed">
           <thead>
-            <tr className="bg-gray-100">
-              <th className="border p-2">Colonne 1</th>
-              <th className="border p-2">Colonne 2</th>
-              <th className="border p-2">Colonne 3</th>
-              <th className="border p-2">Colonne 4</th>
+            <tr className="bg-white">
+              {columns.map((col) => (
+                <th key={col} className="border p-2 overflow-hidden text-ellipsis whitespace-nowrap " >{col}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {paginatedData.length > 0 ? (
-              paginatedData.map((item, index) => (
-                <tr key={index} className="border hover:bg-gray-50">
-                  <td className="border p-2">{item.col1}</td>
-                  <td className="border p-2">{item.col2}</td>
-                  <td className="border p-2">{item.col3}</td>
-                  <td className="border p-2">{item.col4}</td>
+              paginatedData.map((item, rowIndex) => (
+                <tr key={rowIndex} className="border hover:bg-gray-50">
+                  {columns.map((col) => {
+                    const isEditable = editableColumns.includes(col);
+                    return (
+                      <td
+                        key={col}
+                        className={`border p-2 relative group ${isEditable ? "bg-blue-200" : ""}`}
+                        onClick={() => isEditable && setEditingCell(`${rowIndex}-${col}`)}
+                      >
+                      {editingCell === `${rowIndex}-${col}` ? (
+                       <input
+                       type="text"
+                       value={item[col]}
+                       onChange={(e) => handleCellChange(rowIndex, col, e.target.value)}
+                       onBlur={() => setEditingCell(null)}
+                       onKeyDown={(e) => {
+                         if (e.key === "Enter") setEditingCell(null);
+                       }}
+                       className="w-full p-1 border border-gray-300 rounded-md text-center" // Largeur fixe pour 4 chiffres
+                       autoFocus
+                     />
+                      ) : (
+                        <div className="flex items-center justify-center">
+                        {item[col]}
+                        {isEditable && <Pencil className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 cursor-pointer ml-4" />}
+                      </div>
+                      )}
+                    </td>
+                   );
+                 })}
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="p-2 text-center">
+                <td colSpan={columns.length} className="p-2 text-center">
                   Aucun résultat trouvé
                 </td>
               </tr>
@@ -130,12 +139,9 @@ const DataTable = ({ data }) => {
       {/* PAGINATION */}
       {totalPages > 1 && (
         <div className="flex justify-between items-center mt-4 p-2 border-t">
-          {/* Affichage de la page en bas à gauche */}
           <span className="text-gray-700 text-sm">
             Affiche {currentPage} sur {totalPages}
           </span>
-
-          {/* Boutons de navigation en bas à droite */}
           <div className="flex gap-2">
             <button
               className={`px-3 py-1 rounded-md ${
@@ -146,7 +152,7 @@ const DataTable = ({ data }) => {
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
-              <ChevronLeft />
+              <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               className={`px-3 py-1 rounded-md ${
@@ -154,10 +160,12 @@ const DataTable = ({ data }) => {
                   ? "bg-gray-300 cursor-not-allowed"
                   : "bg-gray-200 hover:bg-gray-300"
               }`}
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={currentPage === totalPages}
             >
-              <ChevronRight />
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>
