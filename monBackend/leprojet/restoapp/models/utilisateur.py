@@ -2,9 +2,13 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 class UtilisateurManager(BaseUserManager):
+    """
+    Manager personnalisé pour le modèle Utilisateur.
+    """
     def create_user(self, email, motpasse=None, **extra_fields):
+        """ Crée et retourne un utilisateur avec l'email et le mot de passe spécifiés. """
         if not email:
-            raise ValueError('The Email field must be set')
+            raise ValueError("L'email doit être défini")
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(motpasse)
@@ -12,12 +16,16 @@ class UtilisateurManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, motpasse=None, **extra_fields):
+        """ Crée et retourne un superutilisateur avec tous les privilèges. """
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
         return self.create_user(email, motpasse, **extra_fields)
 
 class Utilisateur(AbstractBaseUser):
+    """
+    Modèle représentant un utilisateur du système.
+    """
     idUtilisateur = models.AutoField(db_column='idUtilisateur', primary_key=True)
     nom = models.CharField(max_length=20, blank=True, null=True)
     prenom = models.CharField(max_length=20)
@@ -34,6 +42,7 @@ class Utilisateur(AbstractBaseUser):
     
     @property
     def get_full_name_role(self):
+        """ Retourne le nom complet de l'utilisateur. """
         return f"{self.nom} {self.prenom} -> {self.role}"
     
     @property
@@ -45,6 +54,7 @@ class Utilisateur(AbstractBaseUser):
         return Rapport.objects.filter(idUtilisateur=self)
     
     def reset_password(self, motpasse):
+        """ Réinitialise le mot de passe de l'utilisateur. """
         self.set_password(motpasse)
         self.save()
 

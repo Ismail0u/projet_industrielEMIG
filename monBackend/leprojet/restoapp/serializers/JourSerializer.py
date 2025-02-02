@@ -2,13 +2,24 @@ from rest_framework import serializers
 from ..models.jour import Jour
 
 class JourSerializer(serializers.ModelSerializer):
-    total_reservations = serializers.IntegerField(read_only=True)
+    nbre_reserve_jour = serializers.SerializerMethodField()
+    nbre_reserve_lendemain_petitDej = serializers.SerializerMethodField()
+    nbre_reserve_lendemain_dejeuner = serializers.SerializerMethodField()
+    nbre_reserve_lendemain_diner = serializers.SerializerMethodField()
 
     class Meta:
         model = Jour
-        fields = '__all__'
+        fields = ['idJour', 'nomJour', 'nbre_reserve_jour', 'nbre_reserve_lendemain_petitDej', 'nbre_reserve_lendemain_dejeuner', 'nbre_reserve_lendemain_diner']
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['total_reservations'] = instance.get_nbre_reserve_jour
-        return representation
+
+    def get_nbre_reserve_jour(self, obj):
+       return obj.get_nbre_reserve_jour
+    
+    def get_nbre_reserve_lendemain_petitDej(self, obj):
+        return obj.get_nbre_reserve_lendemain('petitDej')
+    
+    def get_nbre_reserve_lendemain_dejeuner(self, obj):
+        return obj.get_nbre_reserve_lendemain('dejeuner')
+
+    def get_nbre_reserve_lendemain_diner(self, obj):
+        return obj.get_nbre_reserve_lendemain('diner')

@@ -18,6 +18,10 @@ class Reservation(models.Model):
     @property
     def get_jour(self):
         return self.idJour
+    
+    def get_details_reservation(self):
+        """ Retourne les détails de la réservation. """
+        return f"Réservation de {self.idEtudiant} pour {self.idJour} - {self.idPeriode}"
 
     class Meta:
         managed = False
