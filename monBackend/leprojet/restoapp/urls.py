@@ -23,11 +23,20 @@ router.register(r'stocks', views.StockViewSet, basename='stocks')
 router.register(r'tickets', views.TicketViewSet, basename='tickets')
 router.register(r'typerapports', views.TypeRapportViewSet, basename='typerapports')
 
+router.register(r'tickets-vendus', views.TicketVenduViewSet, basename='tickets-vendus')
+router.register(r'lots', views.LotViewSet, basename='lots')
+router.register(r'argent-remis', views.ArgentRemisViewSet, basename='argent-remis')
+
+
+
  # Endpoint pour l'API
 
 
 urlpatterns = [
+    path('api/', include(router.urls)),
     path('', include(router.urls)),
     path('login/', views.LoginView.as_view(), name='login'), # Keep your login view separate
 
 ]
+
+
