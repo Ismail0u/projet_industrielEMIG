@@ -8,7 +8,7 @@ import Sortie from "./pages/pages_magasinier/Sortie";
 import Stock from "./pages/pages_magasinier/Stock";
 import Profile_M from "./pages/pages_magasinier/Profile_M";
 import Profile_V from "./pages/pages_vendeur/Profile_V";
-import H_Montant from "./pages/pages_vendeur/Historique";
+import H_Montant from "./pages/pages_vendeur/H_Montant";
 import H_Lot from "./pages/pages_vendeur/H_Lot";
 
 
