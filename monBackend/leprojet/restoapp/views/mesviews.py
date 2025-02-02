@@ -1,6 +1,9 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
+from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
+
 
 class BaseViewSet(viewsets.ModelViewSet):
     """
@@ -51,8 +54,8 @@ class BaseViewSet(viewsets.ModelViewSet):
 
 
 # Définition des ViewSets spécifiques, héritant de BaseViewSet
-from ..models import Produit, Categorie, Utilisateur, Etudiant, Fournisseur, GestionTickets, Jour, LotsTicket, MouvementStock, Periode, Rapport, Recu, Reservation, Stock, Ticket, TypeRapport
-from ..serializers import ProduitSerializer, CategorieSerializer, UtilisateurSerializer, EtudiantSerializer, FournisseurSerializer, GestionTicketsSerializer, JourSerializer, LotsTicketSerializer, MouvementStockSerializer, PeriodeSerializer, RapportSerializer, RecuSerializer, ReservationSerializer, StockSerializer, TicketSerializer, TypeRapportSerializer
+from ..models import Produit, Categorie, Utilisateur, Etudiant, Fournisseur, GestionTickets, Jour, LotsTicket, MouvementStock, Periode, Rapport, Recu, Reservation, Stock, Ticket, TypeRapport,Montantremis
+from ..serializers import ProduitSerializer, CategorieSerializer, UtilisateurSerializer, EtudiantSerializer, FournisseurSerializer, GestionTicketsSerializer, JourSerializer, LotsTicketSerializer, MouvementStockSerializer, PeriodeSerializer, RapportSerializer, RecuSerializer, ReservationSerializer, StockSerializer, TicketSerializer, TypeRapportSerializer,MontantRemisSerializer
 
 class ProduitViewSet(BaseViewSet):
     queryset = Produit.objects.all()
@@ -117,3 +120,7 @@ class TicketViewSet(BaseViewSet):
 class TypeRapportViewSet(BaseViewSet):
     queryset = TypeRapport.objects.all()
     serializer_class = TypeRapportSerializer
+
+class MontantRemisListViewSet(BaseViewSet):
+    queryset = MontantRemis.objects.all()
+    serializer_class = MontantRemisSerializer
