@@ -54,8 +54,8 @@ class BaseViewSet(viewsets.ModelViewSet):
 
 
 # Définition des ViewSets spécifiques, héritant de BaseViewSet
-from ..models import Produit, Categorie, Utilisateur, Etudiant, Fournisseur, GestionTickets, Jour, LotsTicket, MouvementStock, Periode, Rapport, Recu, Reservation, Stock, Ticket, TypeRapport,Montantremis
-from ..serializers import ProduitSerializer, CategorieSerializer, UtilisateurSerializer, EtudiantSerializer, FournisseurSerializer, GestionTicketsSerializer, JourSerializer, LotsTicketSerializer, MouvementStockSerializer, PeriodeSerializer, RapportSerializer, RecuSerializer, ReservationSerializer, StockSerializer, TicketSerializer, TypeRapportSerializer,MontantRemisSerializer
+from ..models import Produit, Categorie, Utilisateur, Etudiant, Fournisseur, GestionTickets, Jour, LotsTicket, MouvementStock, Periode, Rapport, Recu, Reservation, Stock, Ticket, TypeRapport
+from ..serializers import ProduitSerializer, CategorieSerializer, UtilisateurSerializer, EtudiantSerializer, FournisseurSerializer, GestionTicketsSerializer, JourSerializer, LotsTicketSerializer, MouvementStockSerializer, PeriodeSerializer, RapportSerializer, RecuSerializer, ReservationSerializer, StockSerializer, TicketSerializer, TypeRapportSerializer
 
 class ProduitViewSet(BaseViewSet):
     queryset = Produit.objects.all()
@@ -120,7 +120,3 @@ class TicketViewSet(BaseViewSet):
 class TypeRapportViewSet(BaseViewSet):
     queryset = TypeRapport.objects.all()
     serializer_class = TypeRapportSerializer
-
-class MontantRemisListViewSet(BaseViewSet):
-    queryset = MontantRemis.objects.all()
-    serializer_class = MontantRemisSerializer
