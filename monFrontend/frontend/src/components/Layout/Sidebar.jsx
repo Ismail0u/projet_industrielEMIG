@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Sidebar = ({ menuItems, userOptions }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(true); // Pour l'ouverture/fermeture de la barre latérale
+  const [hoveredMenu, setHoveredMenu] = useState(null); // Pour suivre l'élément survolé
 
   return (
     <div
-      className={`w-${isOpen ? "44" : "16"} text-white h-screen flex flex-col transition-all duration-500 bg-blue-600`}
+      className={`${isOpen ? "w-44" : "w-16"} text-white h-screen flex flex-col transition-all duration-500 bg-blue-600`}
       onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)} // Se ferme uniquement si on ne clique sur rien
+      onMouseLeave={() => setIsOpen(false)}
     >
       {/* Titre ou logo */}
       <div className="p-2 flex items-center justify-center">
@@ -26,7 +27,13 @@ const Sidebar = ({ menuItems, userOptions }) => {
       <div className="p-5">
         <ul className="space-y-4">
           {menuItems.map((item, index) => (
-            <li key={index} className="flex items-center">
+            <li
+              key={index}
+              className="flex flex-col"
+              onMouseEnter={() => setHoveredMenu(index)} // Afficher le sous-menu au survol
+              onMouseLeave={() => setHoveredMenu(null)} // Masquer le sous-menu quand on quitte
+            >
+              {/* Élément de menu principal */}
               <Link
                 to={item.path}
                 className="flex items-center"
@@ -41,6 +48,33 @@ const Sidebar = ({ menuItems, userOptions }) => {
                   {item.name}
                 </span>
               </Link>
+
+              {/* Sous-menu */}
+              {hoveredMenu === index && item.subItems && (
+                <ul
+                  className="pl-5 mt-2 space-y-2"
+                  style={{ minWidth: "160px" }} // Largeur minimale pour les sous-menus
+                >
+                  {item.subItems.map((subItem, subIndex) => (
+                    <li key={subIndex} className="flex items-center">
+                      <Link
+                        to={subItem.path}
+                        className="flex items-center"
+                        onClick={() => setIsOpen(true)} // Reste ouvert après clic
+                      >
+                        <span className="h-2 w-4 mr-1 flex-shrink-0">{subItem.icon}</span>
+                        <span
+                          className={`transition-opacity duration-500 break-words${
+                            isOpen ? "opacity-100" : "opacity-0"
+                          }`}
+                        >
+                          {subItem.name}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
           ))}
         </ul>
@@ -53,14 +87,20 @@ const Sidebar = ({ menuItems, userOptions }) => {
         <ul className="space-y-4">
           {userOptions.map((option, index) => (
             <li key={index} className="flex items-center">
-              <span className="h-5 w-5 mr-3 flex-shrink-0">{option.icon}</span>
-              <span
-                className={`transition-opacity duration-500 ${
-                  isOpen ? "opacity-100" : "opacity-0"
-                }`}
+              <Link
+                to={option.path}
+                className="flex items-center"
+                onClick={() => setIsOpen(true)} // Reste ouvert après clic
               >
-                {option.name}
-              </span>
+                <span className="h-5 w-5 mr-3 flex-shrink-0">{option.icon}</span>
+                <span
+                  className={`transition-opacity duration-500 whitespace-nowrap ${
+                    isOpen ? "opacity-100" : "opacity-0"
+                  }`}
+                >
+                  {option.name}
+                </span>
+              </Link>
             </li>
           ))}
         </ul>

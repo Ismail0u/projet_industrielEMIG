@@ -7,12 +7,27 @@ import { Columns2, FileClock, User, LogOut } from "lucide-react";
 const Dashboard = () => {
   const menuItems = [
     { icon: <Columns2 size={20} />, name: "Tableau de bord", path: "/dashboard" },
-    { icon: <FileClock size={20} />, name: "Historique", path: "/historique" },
+    {
+      icon: <FileClock size={20} />,
+      name: "Historique",
+      subItems: [
+        {
+          
+          name: "Historique des lots",
+          path: "/H_lot",
+        },
+        {
+          
+          name: "Historique des montants remis",
+          path: "/H_montant",
+        },
+      ],
+    },
   ];
 
   const userOptions = [
-    { icon: <User size={20} />, name: "Profile",path: "/profile_V"},
-    { icon: <LogOut size={20} />, name: "Logout",path:"/profile_V" },
+    { icon: <User size={20} />, name: "Profile", path: "/profile_V" },
+    { icon: <LogOut size={20} />, name: "Logout", path: "/logout" },
   ];
 
   return (
