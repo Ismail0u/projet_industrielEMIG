@@ -1,8 +1,0 @@
-
-from rest_framework import serializers
-from models import MontantRemis
-
-class MontantRemisSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MontantRemis
-        fields = ['id', 'montant', 'date']
