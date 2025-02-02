@@ -11,6 +11,11 @@ module.exports ={
       fontFamily: {
         roboto: ['Roboto', 'sans-serif'],
       },
+      colors: {
+        rouge: "#FF1212",
+        bleu: "#0850A5",
+        accent: "#10B981",
+      },
     },
   },
   plugins: [

@@ -156,3 +156,4 @@ create table recu(
         constraint fk_etranProduRecu foreign key(idProduit) references produit(idProduit),
         constraint fk_etranFourniREcu foreign key(idFournisseur) references fournisseur(idFournisseur)
 );
+

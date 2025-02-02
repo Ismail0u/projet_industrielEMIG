@@ -1,40 +1,40 @@
-/*import DashboardContent from './components/Layout/DashboardContent';
-import DataTable from './components/Layout/DataTable';
-import FilterBar from './components/Layout/DataTable';
-import Filter from './components/Layout/DataTable'; */
-import FournisseurForm from './components/Fournisseur/FournisseurForm';
-import FournisseurList from './components/Fournisseur/FournisseurList';
-import MouvementStockForm from './components/MouvementStock/MouvementStockForm';
-import MouvementStockList from './components/MouvementStock/MouvementStockList';
-import RapportForm from './components/Rapport/RapportForm';
-import RapportList from './components/Rapport/RapportList';
-import RecuList from './components/Recu/RecuList';
-import StockForm from './components/Stock/StockForm';
-import TypeRapportList from './components/TypeRapport/TypeRapportList';
-import './index.css';
-/*import Login from "./pages/Login"; 
-import Dashboard from './pages/pages_vendeur/Dashboard';
-import Historique from './pages/pages_vendeur/Historique';
-import MyPage from './pages/pages_vendeur/Historique'; */
-import ProduitList from './pages/produitList';
+import React from "react";
+import Dashboard from "./pages/pages_vendeur/Dashboard";
 
-const App = () => {
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import Dashboard_M from "./pages/pages_magasinier/Dashboard_M";
+import Entree from "./pages/pages_magasinier/Entree";
+import Sortie from "./pages/pages_magasinier/Sortie";
+import Stock from "./pages/pages_magasinier/Stock";
+import Profile_M from "./pages/pages_magasinier/Profile_M";
+import Profile_V from "./pages/pages_vendeur/Profile_V";
+import H_Montant from "./pages/pages_vendeur/Historique";
+import H_Lot from "./pages/pages_vendeur/H_Lot";
+
+
+function App() {
   return (
-    <div>
-      <ProduitList/>
-      <TypeRapportList />
-      <RapportForm />
-      <RapportList />
-      <RecuList />
-      <MouvementStockForm />
-      <MouvementStockList />
-      <hr />
-      <StockForm />
-      <h1>NOuveau</h1>
-      <FournisseurList />
-    </div>
-    
+    <Router>
+      <Routes>
+
+         <Route path="/" element={<Navigate to="/Dashboard_M" />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/H_lot" element={<H_Lot />} />
+        <Route path="/H_montant" element={<H_Montant />} />
+        <Route path="/profile_M" element={<Profile_M />} />
+        
+
+        <Route path="/dashboard_M" element={<Dashboard_M />} />
+        <Route path="/entree" element={<Entree/>} />
+        <Route path="/sortie" element={<Sortie/>} />
+        <Route path="/stock" element={<Stock />} />
+        <Route path="/profile_V" element={<Profile_V />} />
+        
+
+      </Routes>
+    </Router>
   );
-};
+}
+
 
 export default App;

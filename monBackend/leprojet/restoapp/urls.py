@@ -2,6 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
 
+
 router = DefaultRouter()
 
 # Register each viewset with the router
@@ -22,8 +23,11 @@ router.register(r'stocks', views.StockViewSet, basename='stocks')
 router.register(r'tickets', views.TicketViewSet, basename='tickets')
 router.register(r'typerapports', views.TypeRapportViewSet, basename='typerapports')
 
+ # Endpoint pour l'API
+
 
 urlpatterns = [
     path('', include(router.urls)),
     path('login/', views.LoginView.as_view(), name='login'), # Keep your login view separate
+
 ]
