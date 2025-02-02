@@ -15,3 +15,4 @@ from .StockSerializer import StockSerializer
 from .TicketSerializer import TicketSerializer
 from .TypeRapportSerializer import TypeRapportSerializer
 from .UtilisateurSerializers import UtilisateurSerializer
+from .VendeurSerializer import TicketVenduSerializer, LotSerializer, ArgentRemisSerializer

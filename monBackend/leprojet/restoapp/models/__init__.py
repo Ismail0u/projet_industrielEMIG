@@ -14,3 +14,4 @@ from .stock import Stock
 from .ticket import Ticket
 from .typerapport import TypeRapport
 from .utilisateur import Utilisateur,UtilisateurManager
+from .vendeur import Lot,TicketVendu,ArgentRemis
