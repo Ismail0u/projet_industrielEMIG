@@ -14,6 +14,17 @@ class Etudiant(models.Model):
         from datetime import date
         return Reservation.objects.filter(idEtudiant=self, idPeriode=periode, dateReservation=date.today()).count()
     
+    # Improve reservation check method
+    def existe_reserv_pour_periode_date(self, periode, date=None):
+        from .reservation import Reservation
+        from datetime import date as today_date
+        check_date = date or today_date.today()
+        return Reservation.objects.filter(
+            idEtudiant=self,
+            idPeriode=periode,
+            dateReservation=check_date
+        ).exists()
+    
 
     class Meta:
         managed = False
