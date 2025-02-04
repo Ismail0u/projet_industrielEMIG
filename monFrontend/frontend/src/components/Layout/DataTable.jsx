@@ -1,23 +1,24 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { ChevronLeft, ChevronRight, ChevronDown, Pencil } from "lucide-react";
 
-const DataTable = ({ data, editableColumns,rowsPerPage }) => {
+const DataTable = ({ data, editableColumns, rowsPerPage }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [editableData, setEditableData] = useState(data); // Données modifiables
-  const [editingCell, setEditingCell] = useState(null); // Suivi de la cellule en édition
-
+  const [editableData, setEditableData] = useState(data);
+  const [editingCell, setEditingCell] = useState(null);
+  useEffect(() => {
+    setEditableData(data);
+  }, [data]);
 
   const columns = data.length > 0 ? Object.keys(data[0]) : [];
-  const today = new Date().toISOString().split("T")[0];
-
   const filteredData = editableData.filter((item) =>
     columns.some((col) =>
       String(item[col]).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
+
 
   const sortedData = sortBy
     ? [...filteredData].sort((a, b) => (a[sortBy] > b[sortBy] ? 1 : -1))
@@ -32,8 +33,11 @@ const DataTable = ({ data, editableColumns,rowsPerPage }) => {
     const updatedData = [...editableData];
     updatedData[rowIndex][colName] = value;
     setEditableData(updatedData);
+    
   };
-
+  console.log("Données reçues dans DataTable :", data);
+  console.log("Colonnes détectées :", data.length > 0 ? Object.keys(data[0]) : "Aucune donnée");
+  
   return (
     <div className="p-4 bg-white rounded-lg">
       {/* Barre de recherche */}
