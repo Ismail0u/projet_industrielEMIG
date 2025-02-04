@@ -1,112 +1,119 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const FournisseurForm = ({ onSubmit, initialData = {} }) => {
-    const [idFournisseur, setIdFournisseur] = useState(initialData.idFournisseur || '');
-    const [nomFournisseur, setNomFournisseur] = useState(initialData.nomFournisseur || '');
-    const [contact, setContact] = useState(initialData.contact || '');
-    const [dateAjout, setDateAjout] = useState(
-        initialData.dateAjout ? new Date(initialData.dateAjout).toISOString().slice(0, 16) : ''
-    );
-    const [error, setError] = useState(null);
-    const [submitting, setSubmitting] = useState(false);
+  const [idFournisseur, setIdFournisseur] = useState(initialData.idFournisseur || '');
+  const [nomFournisseur, setNomFournisseur] = useState(initialData.nomFournisseur || '');
+  const [contact, setContact] = useState(initialData.contact || '');
+  const [dateAjout, setDateAjout] = useState(
+    initialData.dateAjout ? new Date(initialData.dateAjout).toISOString().slice(0, 16) : ''
+  );
+  const [error, setError] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
-    // Utilisation de useEffect pour mettre à jour les valeurs initiales
-    /*useEffect(() => {
-        if (initialData) {
-            setIdFournisseur(initialData.idFournisseur || '');
-            setNomFournisseur(initialData.nomFournisseur || '');
-            setContact(initialData.contact || '');
-            setDateAjout(
-                initialData.dateAjout ? new Date(initialData.dateAjout).toISOString().slice(0, 16) : ''
-            );
-        }
-    }, [initialData]);*/
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
 
-    // Fonction pour gérer la soumission du formulaire
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError(null);
+    // Validation des champs
+    if (!idFournisseur.trim() || !nomFournisseur.trim() || !contact.trim()) {
+      setError("Tous les champs obligatoires doivent être remplis.");
+      return;
+    }
 
-        // Validation des champs
-        if (!idFournisseur.trim() || !nomFournisseur.trim() || !contact.trim()) {
-            setError("Tous les champs sont obligatoires.");
-            return;
-        }
+    setSubmitting(true);
 
-        setSubmitting(true); // Désactivation du bouton pendant la soumission
+    try {
+      const formData = {
+        idFournisseur,  // Ajout de l'ID au payload
+        nomFournisseur,
+        contact,
+        dateAjout: dateAjout ? new Date(dateAjout).toISOString() : null,
+      };
 
-        try {
-            const formData = {
-                idFournisseur,
-                nomFournisseur,
-                contact,
-                dateAjout: dateAjout ? new Date(dateAjout).toISOString() : null,
-            };
+      console.log("Données à soumettre:", formData);
+      await onSubmit(formData);
 
-            // Affiche les données dans la console pour déboguer
-            console.log("Données à soumettre:", formData);
+      // Réinitialisation du formulaire après soumission
+      setIdFournisseur('');
+      setNomFournisseur('');
+      setContact('');
+      setDateAjout('');
+    } catch (error) {
+      console.error('Erreur lors de la soumission:', error);
+      setError(error.message || "Une erreur est survenue.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
-            // Appel à la fonction onSubmit pour envoyer les données
-            await onSubmit(formData);
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+      
+      <div className="flex flex-col">
+        <label htmlFor="idFournisseur" className="mb-1 font-medium text-gray-700">
+          ID Fournisseur
+        </label>
+        <input
+          type="text"
+          id="idFournisseur"
+          value={idFournisseur}
+          onChange={(e) => setIdFournisseur(e.target.value)}
+          required
+          className="border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
+        />
+      </div>
 
-            // Si soumission réussie, réinitialiser le formulaire
-            setIdFournisseur('');
-            setNomFournisseur('');
-            setContact('');
-            setDateAjout('');
+      <div className="flex flex-col">
+        <label htmlFor="nomFournisseur" className="mb-1 font-medium text-gray-700">
+          Nom Fournisseur
+        </label>
+        <input
+          type="text"
+          id="nomFournisseur"
+          value={nomFournisseur}
+          onChange={(e) => setNomFournisseur(e.target.value)}
+          required
+          className="border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
+        />
+      </div>
 
-        } catch (error) {
-            console.error('Erreur lors de la soumission:', error);
-            setError(error.message || "Une erreur est survenue.");
-        } finally {
-            setSubmitting(false); // Réactivation du bouton après la soumission
-        }
-    };
+      <div className="flex flex-col">
+        <label htmlFor="contact" className="mb-1 font-medium text-gray-700">
+          Contact
+        </label>
+        <input
+          type="text"
+          id="contact"
+          value={contact}
+          onChange={(e) => setContact(e.target.value)}
+          required
+          className="border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
+        />
+      </div>
 
-    return (
-        <form onSubmit={handleSubmit}>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            
-            <label htmlFor="idFournisseur">ID Fournisseur :</label>
-            <input
-                type="text"
-                id="idFournisseur"
-                value={idFournisseur}
-                onChange={(e) => setIdFournisseur(e.target.value)}
-                required
-            />
+      <div className="flex flex-col">
+        <label htmlFor="dateAjout" className="mb-1 font-medium text-gray-700">
+          Date d'ajout
+        </label>
+        <input
+          type="datetime-local"
+          id="dateAjout"
+          value={dateAjout}
+          onChange={(e) => setDateAjout(e.target.value)}
+          className="border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
+        />
+      </div>
 
-            <label htmlFor="nomFournisseur">Nom Fournisseur :</label>
-            <input
-                type="text"
-                id="nomFournisseur"
-                value={nomFournisseur}
-                onChange={(e) => setNomFournisseur(e.target.value)}
-                required
-            />
-
-            <label htmlFor="contact">Contact :</label>
-            <input
-                type="text"
-                id="contact"
-                value={contact}
-                onChange={(e) => setContact(e.target.value)}
-                required
-            />
-
-            <label htmlFor="dateAjout">Date d'ajout :</label>
-            <input
-                type="datetime-local"
-                id="dateAjout"
-                value={dateAjout}
-                onChange={(e) => setDateAjout(e.target.value)}
-            />
-
-            <button type="submit" disabled={submitting}>
-                {submitting ? "Enregistrement..." : "Enregistrer"}
-            </button>
-        </form>
-    );
+      <button 
+        type="submit" 
+        disabled={submitting} 
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring"
+      >
+        {submitting ? "Enregistrement..." : "Enregistrer"}
+      </button>
+    </form>
+  );
 };
 
 export default FournisseurForm;

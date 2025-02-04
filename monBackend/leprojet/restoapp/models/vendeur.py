@@ -17,7 +17,7 @@ class TicketVendu(models.Model):
 
 class Lot(models.Model):
     TYPE_LOT_CHOICES = [
-        ('Selectionner', 'Selectionner'),
+       
         ('Déjeuner', 'Déjeuner'),
         ('Petit-déjeuner', 'Petit-déjeuner'),
         
