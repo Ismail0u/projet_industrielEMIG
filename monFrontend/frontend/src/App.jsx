@@ -10,6 +10,7 @@ import Profile_M from "./pages/pages_magasinier/Profile_M";
 import Profile_V from "./pages/pages_vendeur/Profile_V";
 import H_Montant from "./pages/pages_vendeur/H_Montant";
 import H_Lot from "./pages/pages_vendeur/H_Lot";
+import Fournisseurs from "./pages/pages_magasinier/Fournisseur";
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/H_lot" element={<H_Lot />} />
         <Route path="/H_montant" element={<H_Montant />} />
         <Route path="/profile_M" element={<Profile_M />} />
+        <Route path="/fournisseurs" element={<Fournisseurs/>} />
         
 
         <Route path="/dashboard_M" element={<Dashboard_M />} />

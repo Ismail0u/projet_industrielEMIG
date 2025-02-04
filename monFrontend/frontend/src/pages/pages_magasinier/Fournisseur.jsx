@@ -1,26 +1,26 @@
+// Sortie.js
 import React from "react";
 import Sidebar from "../../components/Layout/Sidebar";
 import Header from "../../components/Layout/Header";
 import DataTable from "../../components/Layout/DataTable";
 import { menuItems,userOptions } from "../../components/Layout/Layout_M/SidebarData_M";
-import { ClipboardCopy, ClipboardPaste, Columns2, ClipboardList, User, LogOut } from "lucide-react";
 
-const Entree = () => {
+const Fournisseurs = () => {
     const data = [
-        { Produit: "Tomate concentrée", Unité: "kg", Lundi: 10, Mardi: 15, Mercredi: 8, Jeudi: 12, Vendredi: 9, Samedi: 14, Dimanche: 11, Total: 79 },
-        { Produit: "Pomme de terre", Unité: "litres", Lundi: 5, Mardi: 5, Mercredi: 5, Jeudi: 5, Vendredi: 5, Samedi: 5, Dimanche: 5, Total: 35 },
-        { Produit: "Gaz Butane", Unité: "paquets", Lundi: 7, Mardi: 7, Mercredi: 7, Jeudi: 7, Vendredi: 7, Samedi: 7, Dimanche: 7, Total: 49 }
+        { ID: 1, Nom: "Fournisseur A", Contact: "contactA@example.com", "Date d'ajout": "2023-10-01", Actions: "Edit | Delete" },
+        { ID: 2, Nom: "Fournisseur B", Contact: "contactB@example.com", "Date d'ajout": "2023-10-02", Actions: "Edit | Delete" },
+        { ID: 3, Nom: "Fournisseur C", Contact: "contactC@example.com", "Date d'ajout": "2023-10-03", Actions: "Edit | Delete" },
+        { ID: 4, Nom: "Fournisseur D", Contact: "contactD@example.com", "Date d'ajout": "2023-10-04", Actions: "Edit | Delete" },
     ];
 
     // Obtenir le jour actuel en français
-    const joursSemaine = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
-    const jourActuel = joursSemaine[new Date().getDay()]; // Ex: "Lundi"
+    const jours = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+    const jourActuel = jours[new Date().getDay()];
 
     // Seule la colonne du jour actuel sera modifiable
     const editableColumns = [jourActuel];
-    const rowsPerPage = 8;
 
-   
+    const rowsPerPage = 6;
 
     return (
         <div className="h-screen flex w-full overflow-hidden">
@@ -41,4 +41,4 @@ const Entree = () => {
     );
 };
 
-export default Entree;
+export default Fournisseurs;

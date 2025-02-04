@@ -2,6 +2,7 @@ import React from "react";
 import Sidebar from "../../components/Layout/Sidebar";
 import Header from "../../components/Layout/Header";
 import DataTable from "../../components/Layout/DataTable";
+import { menuItems,userOptions } from "../../components/Layout/Layout_M/SidebarData_M";
 import { ClipboardCopy, ClipboardPaste,Columns2,ClipboardList ,User, LogOut } from "lucide-react";
 
 const Stock = () => {
@@ -19,17 +20,7 @@ const Stock = () => {
 
   const rowsPerPage=5;
 
-  const menuItems = [
-    { icon: <Columns2 size={20} />, name: "Tableau de bord", path: "/dashboard_M" },
-    { icon: <ClipboardList size={20} />, name: "Stock", path: "/stock" },
-    { icon: <ClipboardCopy size={20} />, name: "Entrées", path: "/entree" },
-    { icon: <ClipboardPaste size={20} />, name: "Sorties", path: "/sortie" },
-  ];
-
-  const userOptions = [
-    { icon: <User size={20} />, name: "Profile",path: "/profile_M" },
-    { icon: <LogOut size={20} />, name: "Se déconnecter",path:"/profile_V" },
-  ];
+ 
 
   return (
     <div className="h-screen flex w-full overflow-hidden bg-gray-100">

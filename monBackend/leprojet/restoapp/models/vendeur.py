@@ -2,6 +2,7 @@ from django.db import models
 
 class TicketVendu(models.Model):
     TYPE_TICKET_CHOICES = [
+       
         ('Petit-déjeuner', 'Petit-déjeuner'),
         ('Déjeuner', 'Déjeuner'),
     ]
@@ -16,8 +17,10 @@ class TicketVendu(models.Model):
 
 class Lot(models.Model):
     TYPE_LOT_CHOICES = [
-        ('Petit-déjeuner', 'Petit-déjeuner'),
+        ('Selectionner', 'Selectionner'),
         ('Déjeuner', 'Déjeuner'),
+        ('Petit-déjeuner', 'Petit-déjeuner'),
+        
     ]
 
     type_lot = models.CharField(max_length=20, choices=TYPE_LOT_CHOICES)
