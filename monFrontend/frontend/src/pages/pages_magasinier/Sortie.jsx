@@ -3,7 +3,7 @@ import Sidebar from "../../components/Layout/Sidebar";
 import Header from "../../components/Layout/Header";
 import DataTable from "../../components/Layout/DataTable";
 import { sortieStock,StockTableService } from "../../services/apiService";
-import { ClipboardCopy, ClipboardPaste, Columns2, ClipboardList, User, LogOut } from "lucide-react";
+import { menuItems,userOptions } from "../../components/Layout/Layout_M/SidebarData_M";
 
 const Sortie = () => {
     const [produits, setProduits] = useState([]);
@@ -71,15 +71,7 @@ const Sortie = () => {
     return (
         <div className="h-screen flex w-full overflow-hidden">
             {/* Barre latérale */}
-            <Sidebar title="My Dashboard" menuItems={[
-                { icon: <Columns2 size={20} />, name: "Tableau de bord", path: "/dashboard_M" },
-                { icon: <ClipboardList size={20} />, name: "Stock", path: "/stock" },
-                { icon: <ClipboardCopy size={20} />, name: "Entrées", path: "/entree" },
-                { icon: <ClipboardPaste size={20} />, name: "Sorties", path: "/sortie" }
-            ]} userOptions={[
-                { icon: <User size={20} />, name: "Profile", path: "/profile_M" },
-                { icon: <LogOut size={20} />, name: "Se déconnecter", path: "/profile_V" }
-            ]} />
+            <Sidebar title="My Dashboard" menuItems={menuItems} userOptions={userOptions} />
 
             {/* Contenu principal */}
             <div className="flex-1 flex flex-col h-screen">
@@ -91,7 +83,7 @@ const Sortie = () => {
                 <DataTable
                   data={produits}
                   editableColumns={editableColumns}
-                  rowsPerPage={6}
+                  rowsPerPage={8}
                   onUpdateStock={handleStockOut} // s On passe la fonction pour gérer la mise à jour
                 />
                 

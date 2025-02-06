@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from ..models.produit import Produit
+from ..models.fournisseur import Fournisseur
+from ..models.categorie import Categorie
 
 class ProduitSerializer(serializers.ModelSerializer):
     """
@@ -35,3 +37,12 @@ class ProduitSerializer(serializers.ModelSerializer):
         """
         obj.set_etat()  # Met à jour l'état
         return obj.etat
+
+
+class ProduitEnvoieSerializer(serializers.ModelSerializer):
+    idFournisseur = serializers.PrimaryKeyRelatedField(queryset=Fournisseur.objects.all())
+    idCategorie = serializers.PrimaryKeyRelatedField(queryset=Categorie.objects.all())
+
+    class Meta:
+        model = Produit
+        fields = ['idProduit', 'nomProduit', 'quantiteDisponible', 'seuilCritique', 'ration', 'idFournisseur', 'idCategorie']

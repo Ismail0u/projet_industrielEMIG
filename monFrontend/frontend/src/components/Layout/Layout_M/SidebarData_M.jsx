@@ -3,6 +3,7 @@ import { Columns2, ClipboardList, ClipboardCopy, ClipboardPaste, User, LogOut, P
 
 export const menuItems = [
     { icon: <Columns2 size={20} />, name: "Tableau de bord", path: "/dashboard_M" },
+    {icon: <ClipboardCopy size={20} />, name: "Ajout Produit" , path: "/produit"},
     { icon: <ClipboardList size={20} />, name: "Stock", path: "/stock" },
     { icon: <ClipboardCopy size={20} />, name: "Entrées", path: "/entree" },
     { icon: <ClipboardPaste size={20} />, name: "Sorties", path: "/sortie" },
