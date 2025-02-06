@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { produitService, fournisseurService, categorieService } from "../../services/apiService";
+import { produitEnvoieService, fournisseurService, categorieService } from "../../services/apiService";
+import Sidebar from '../Layout/Sidebar';
+import Header from '../Layout/Header';
+import { menuItems } from '../Layout/Layout_M/SidebarData_M';
+import { userOptions } from '../Layout/Layout_M/SidebarData_M';
 
 const ProduitForm = ({ onProduitAjoute }) => {
   const [formData, setFormData] = useState({
@@ -44,7 +48,7 @@ const ProduitForm = ({ onProduitAjoute }) => {
     }
 
     try {
-      await produitService.create(formData);
+      await produitEnvoieService.create(formData);
       setMessage("Produit ajouté avec succès!");
       setFormData({
         idProduit: "",

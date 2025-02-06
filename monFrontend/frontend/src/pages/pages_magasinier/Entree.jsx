@@ -87,7 +87,7 @@ const Entree = () => {
                     <DataTable
                         data={produits}
                         editableColumns={editableColumns}
-                        rowsPerPage={6}
+                        rowsPerPage={8}
                         onUpdateStock={handleStockOut}
                     />
                 </div>

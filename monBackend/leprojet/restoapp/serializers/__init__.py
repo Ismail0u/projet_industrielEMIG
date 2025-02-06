@@ -7,7 +7,7 @@ from .LoginSerializer import LoginSerializer
 from .LotsTicketSerializer import LotsTicketSerializer
 from .MouvementStockSerializer import MouvementStockSerializer
 from .PeriodeSerializer import PeriodeSerializer
-from .ProduitSerializer import ProduitSerializer
+from .ProduitSerializer import ProduitSerializer , ProduitEnvoieSerializer
 from .RapportSerializer import RapportSerializer
 from .recuSerializer import RecuSerializer
 from .ReservationSerializer import ReservationSerializer
