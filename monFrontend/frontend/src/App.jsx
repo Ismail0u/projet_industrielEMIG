@@ -11,6 +11,7 @@ import Profile_V from "./pages/pages_vendeur/Profile_V";
 import H_Montant from "./pages/pages_vendeur/H_Montant";
 import H_Lot from "./pages/pages_vendeur/H_Lot";
 import Fournisseurs from "./pages/pages_magasinier/Fournisseur";
+import Login from "./pages/Login";
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
         <Route path="/stock" element={<Stock />} />
         <Route path="/profile_V" element={<Profile_V />} />
         
+        <Route path="/logout" element={<Login />}  />
 
       </Routes>
     </Router>

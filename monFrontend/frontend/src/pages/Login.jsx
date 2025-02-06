@@ -6,7 +6,7 @@ const Login = () => {
 
   return (
     <div
-    className="relative flex items-center justify-center min-h-screen bg-gradient-to-r from-[#0D519F] to-[#E6292E] overflow-hidden"
+    className="relative flex items-center justify-center min-h-screen bg-r- overflow-hidden"
   >  
       {/* Login card */}
       <div className="z-10 bg-white rounded-lg shadow-md w-full max-w-sm p-6">
@@ -18,7 +18,7 @@ const Login = () => {
           <div className="mb-4">
             <label
               htmlFor="phone"
-              className="block text-sm font-roboto font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-700"
             >
               Numéro de téléphone
             </label>
