@@ -36,6 +36,9 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('', include(router.urls)),
     path('login/', views.LoginView.as_view(), name='login'), # Keep your login view separate
+    path('mouvements-stock-table/', views.MouvementStockTableView.as_view(), name="mouvements_stock_table"),
+    path('mouvement-stock-update/', views.update_mouvement_stock, name="mouvement_stock_update"),
+    path('sortie-stock/', views.sortie_stock, name="sortie_stock"),
 
 ]
 

@@ -3,6 +3,10 @@ from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view
+from decimal import Decimal
+from django.db import transaction
+
 
 
 class BaseViewSet(viewsets.ModelViewSet):
@@ -120,3 +124,61 @@ class TicketViewSet(BaseViewSet):
 class TypeRapportViewSet(BaseViewSet):
     queryset = TypeRapport.objects.all()
     serializer_class = TypeRapportSerializer
+
+@api_view(['POST'])
+def sortie_stock(request):
+    """
+    API pour enregistrer une sortie de stock et mettre à jour la quantité du produit.
+    """
+    data = request.data
+    produit_nom = data.get("produit")
+    jour_nom = data.get("jour")
+    quantite_sortie = data.get("quantite")
+
+    # Vérification des données obligatoires
+    if not produit_nom or not jour_nom or quantite_sortie is None:
+        return Response({"error": "Tous les champs sont requis."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        quantite_sortie = Decimal(str(quantite_sortie))  # Conversion en Decimal
+        if quantite_sortie <= 0:
+            return Response({"error": "La quantité doit être un nombre positif."}, status=status.HTTP_400_BAD_REQUEST)
+    except (TypeError, ValueError):
+        return Response({"error": "Quantité invalide."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Récupération des objets Produit et Jour
+    produit = get_object_or_404(Produit, nomProduit=produit_nom)
+    jour = get_object_or_404(Jour, nomJour=jour_nom)
+
+    # Vérification de la quantité disponible avant la sortie
+    if quantite_sortie > produit.quantiteDisponible:
+        return Response({
+            "error": f"Stock insuffisant. Quantité disponible : {produit.quantiteDisponible}"
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    # Transaction pour garantir l'intégrité des données
+    with transaction.atomic():
+        # Chercher un mouvement existant pour ce produit et ce jour
+        mouvement_exist = MouvementStock.objects.filter(idProduit=produit, idJour=jour).first()
+
+        if mouvement_exist:
+            mouvement_exist.quantite = quantite_sortie  # Mise à jour de la quantité
+            mouvement_exist.estSortie = True  # S'assurer que c'est une sortie
+            mouvement_exist.save()
+        else:
+            MouvementStock.objects.create(
+                idProduit=produit,
+                idJour=jour,
+                quantite=quantite_sortie,
+                estSortie=True
+            )
+
+        # Mise à jour du stock du produit
+        produit.quantiteDisponible -= quantite_sortie
+        produit.save()
+
+    return Response({
+        "message": "Sortie enregistrée avec succès.",
+        "produit": produit.nomProduit,
+        "quantite_restante": produit.quantiteDisponible
+    }, status=status.HTTP_200_OK)
