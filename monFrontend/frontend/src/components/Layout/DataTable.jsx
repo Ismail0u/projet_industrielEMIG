@@ -78,7 +78,7 @@ const DataTable = ({ data, editableColumns, rowsPerPage, onUpdateStock }) => {
               <ChevronDown className="w-4 h-4" />
             </button>
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-300 rounded-md shadow-lg">
+              <div className="absolute right-0 mt-2 w-32 bg-white bg-opacity-100 border border-gray-300 rounded-md shadow-lg z-50">
                 {columns.map((col) => (
                   <button
                     key={col}
@@ -143,7 +143,7 @@ const DataTable = ({ data, editableColumns, rowsPerPage, onUpdateStock }) => {
                           />
                         ) : (
                           <div className="flex items-center justify-center">
-                            {editableData[rowIndex][col]} {/* Garde la valeur modifiée */}
+                            {editableData[rowIndex][col]}
                             {isEditable && (
                               <Pencil className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 cursor-pointer ml-4" />
                             )}

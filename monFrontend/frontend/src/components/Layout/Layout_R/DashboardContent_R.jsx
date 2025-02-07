@@ -1,6 +1,6 @@
 import React from "react";
 
-const DashboardContent_M= () => {
+const DashboardContent_R= () => {
   return (
     <div className="bg-gray-100 h-full w-full flex justify-center items-center p-4">
       {/* Section des cartes */}
@@ -37,4 +37,4 @@ const DashboardContent_M= () => {
   );
 };
 
-export default DashboardContent_M;
+export default DashboardContent_R;

@@ -1,8 +1,8 @@
 import React from "react";
 import Sidebar from "../../components/Layout/Sidebar";
 import Header from "../../components/Layout/Header";
-import DashboardContent from "../../components/Layout/Layout_V/DashboardContent";
-import { menuItems,userOptions } from "../../components/Layout/Layout_V/SidebarData_V";
+import DashboardContent from "../../components/Layout/Layout_R/DashboardContent_R";
+import { menuItems,userOptions } from "../../components/Layout/Layout_R/SidebarData_R";
 
 const Dashboard_R = () => {
   

@@ -12,5 +12,5 @@ export const menuItems = [
 
 export const userOptions = [
     { icon: <User size={20} />, name: "Profile", path: "/profile_M" },
-    { icon: <LogOut size={20} />, name: "Se déconnecter", path: "/profile_V" },
+    { icon: <LogOut size={20} />, name: "Se déconnecter", path: "/logout" },
 ];

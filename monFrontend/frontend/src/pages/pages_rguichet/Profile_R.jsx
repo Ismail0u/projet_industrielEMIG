@@ -2,9 +2,9 @@ import React from "react";
 import Profile from "../../components/Layout/Profile";
 import Sidebar from "../../components/Layout/Sidebar";
 import Header from "../../components/Layout/Header";
-import { menuItems, userOptions } from "../../components/Layout/Layout_V/SidebarData_V";
+import { menuItems, userOptions } from "../../components/Layout/Layout_R/SidebarData_R";
 
-const Profile_V = () => {
+const Profile_R = () => {
   const user = {
     profilePicture: "https://via.placeholder.com/150",
     fullName: "Soumana",
@@ -31,4 +31,4 @@ const Profile_V = () => {
   );
 };
 
-export default Profile_V;
+export default Profile_R;
