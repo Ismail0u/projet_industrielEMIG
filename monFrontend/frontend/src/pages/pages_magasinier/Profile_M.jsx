@@ -6,32 +6,25 @@ import { menuItems, userOptions } from "../../components/Layout/Layout_M/Sidebar
 
 const Profile_M = () => {
   const user = {
-    fullName: "Soumana Issoufou",
-    firstName: "Soumana",
-    lastName: "Issoufou",
+    profilePicture: "https://via.placeholder.com/150",
+    fullName: "Soumana",
     role: "Vendeur de ticket",
-    email: "soumana.issoufou@example.com",
-    phone: "+227 90 12 34 56",
-    password: "motdepasse123",
+    bio: "Je suis un vendeur de ticket passionné par mon travail.",
   };
 
   return (
     <div className="h-screen flex w-full overflow-hidden">
       {/* Sidebar */}
-      <Sidebar menuItems={menuItems} userOptions={userOptions} />
+      <Sidebar title="My Dashboard" menuItems={menuItems} userOptions={userOptions} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen">
         {/* Header */}
-        <Header h_title="Profil" h_role="Vendeur de ticket" h_user="Soumana Issoufou" />
+        <Header h_title="Tableau de bord" h_role="Vendeur de ticket" h_user="Soumana" />
 
-        {/* Profile Section */}
-        <div className="flex-1 overflow-y-auto p-6 flex justify-center items-center">
-          <div className="w-full max-w-[800px] bg-white shadow-lg rounded-lg p-6">
-            <div className="grid grid-cols-2 gap-6">
-              <Profile user={user} editable={true} />
-            </div>
-          </div>
+        {/* Dashboard Content */}
+        <div className="flex-1 overflow-hidden p-0 flex items-center justify-center">
+          <Profile user={user} editable={true} />
         </div>
       </div>
     </div>

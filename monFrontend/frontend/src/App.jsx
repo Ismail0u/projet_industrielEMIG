@@ -14,6 +14,9 @@ import RecuList from "./components/Recu/RecuList";
 import ProduitForm from "./components/Produit/ProduitForm";
 import Fournisseurs from "./pages/pages_magasinier/Fournisseur";
 import Login from "./pages/Login";
+import Dashboard_R from "./pages/pages_rguichet/Dashboard_R";
+import Reservation from "./pages/pages_rguichet/Reservation";
+import Profile_R from "./pages/pages_rguichet/Profile_R";
 
 
 function App() {
@@ -35,7 +38,14 @@ function App() {
         <Route path="/sortie" element={<Sortie/>} />
         <Route path="/stock" element={<Stock />} />
         <Route path="/profile_V" element={<Profile_V />} />
+
+        <Route path="/dashboard_R" element={<Dashboard_R/>} />
+        <Route path="/reservation" element={<Reservation />} />
+        <Route path="/profile_R" element={<Profile_R />} />
+
+
         
+        <Route path="/logout" element={<Login/>} />
 
       </Routes>
     </Router>

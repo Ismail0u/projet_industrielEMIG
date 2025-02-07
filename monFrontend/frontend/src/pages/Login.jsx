@@ -6,7 +6,7 @@ const Login = () => {
 
   return (
     <div
-    className="relative flex items-center justify-center min-h-screen bg-r- overflow-hidden"
+    className="relative flex items-center justify-center min-h-screen bg-blue-600 overflow-hidden"
   >  
       {/* Login card */}
       <div className="z-10 bg-white rounded-lg shadow-md w-full max-w-sm p-6">
