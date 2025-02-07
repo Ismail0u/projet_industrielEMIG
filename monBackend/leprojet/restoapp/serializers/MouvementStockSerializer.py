@@ -2,15 +2,21 @@ from rest_framework import serializers
 from ..models.mouvementstock import MouvementStock
 
 class MouvementStockSerializer(serializers.ModelSerializer):
-    is_outgoing = serializers.BooleanField(read_only=True)
-    total_quantity = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    is_outgoing = serializers.SerializerMethodField()
+    total_quantity = serializers.SerializerMethodField()
+    produit_nom = serializers.CharField(source='idProduit.nomProduit', read_only=True)
+    jour_nom = serializers.CharField(source='idJour.nomJour', read_only=True)
 
     class Meta:
         model = MouvementStock
-        fields = '__all__'
+        fields = [
+            'idMouvement', 'idProduit', 'produit_nom', 'quantite', 
+            'dateMouvement', 'estSortie', 'is_outgoing', 'total_quantity',
+            'idRapport', 'idJour', 'jour_nom'
+        ]
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['is_outgoing'] = instance.get_estsortie
-        representation['total_quantity'] = instance.get_quantite_mouve
-        return representation
+    def get_is_outgoing(self, obj):
+        return obj.get_estsortie
+
+    def get_total_quantity(self, obj):
+        return obj.get_quantite_mouve

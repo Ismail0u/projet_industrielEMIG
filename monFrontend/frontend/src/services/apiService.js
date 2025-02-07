@@ -10,17 +10,17 @@ class ApiService {
     this.baseURL = `${API_URL}/${resourceName}/`; // Ajout d'un slash à la fin pour éviter les erreurs d'URL
   }
 
-  async get() {
+  async get(endpoint = "", config = {}) {
     try {
-      // Effectue une requête GET à l'URL de base.
-      const response = await axios.get(this.baseURL);
-      console.log('Data received from API:', response.data); // Ajout d'un log pour vérifier les données reçues
+      const response = await axios.get(`${this.baseURL}${endpoint}`, config);
+      console.log('Data received from API:', response.data);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des données:', error);
       throw error;
     }
   }
+  
 
   async getById(id) {
     try {
@@ -96,6 +96,25 @@ export const stockService = new ApiService('stocks');
 export const ticketService = new ApiService('tickets');
 export const typerapportService = new ApiService('typerapports');
 export const loginService = new ApiService('login');
+export const StockTableService = new ApiService('mouvements-stock-table');
+export const StockUpdateService = (produit, jour, quantite) => {
+  return axios.post(`${API_URL}/mouvement-stock-update/`, { produit, jour, quantite });
+};
+export const sortieStock = async (produit, jour, quantite) => {
+  try {
+      const response = await axios.post('http://127.0.0.1:8000/api/sortie-stock/', {
+          produit,
+          jour,
+          quantite
+      });
+      return response.data;
+  } catch (error) {
+      console.error("Erreur lors de la sortie de stock :", error);
+      throw error;
+  }
+};
+
+
 
 // Exporte également la classe ApiService au cas où elle serait nécessaire pour d'autres ressources.
 export default ApiService;

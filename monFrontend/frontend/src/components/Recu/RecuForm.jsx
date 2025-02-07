@@ -1,118 +1,177 @@
-import React, { useState, useEffect } from 'react';
-import { produitService, fournisseurService, mouvementStockService } from '../../services/apiService';
+import React, { useState, useEffect } from "react";
+import { produitService, fournisseurService, recuService } from "../../services/apiService";
 
-const RecuForm = ({ onSubmit, initialData = {} }) => {
-    // États pour stocker les données du formulaire et les données de référence
-    const [dateRecu, setDateRecu] = useState(initialData.dateRecu || '');
-    const [quantite, setQuantite] = useState(initialData.quantite || '');
-    const [idProduit, setIdProduit] = useState(initialData.idProduit || '');
-    const [idFournisseur, setIdFournisseur] = useState(initialData.idFournisseur || '');
+const RecuForm = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
+    // États du formulaire
+    const [dateRecu, setDateRecu] = useState(initialData.dateRecu || "");
+    const [quantite, setQuantite] = useState(initialData.quantite || "");
+    const [idProduit, setIdProduit] = useState(initialData.idProduit || "");
+    const [idFournisseur, setIdFournisseur] = useState(initialData.idFournisseur || "");
+
+    // États des produits et fournisseurs
     const [produits, setProduits] = useState([]);
     const [fournisseurs, setFournisseurs] = useState([]);
+
+    // États de gestion
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
 
-    // Effet de cycle de vie pour charger les produits et les fournisseurs au montage
+    // Charger les produits et fournisseurs au montage
     useEffect(() => {
+        if (!isOpen) return; // Charger les données seulement si la modale est ouverte
+
         const fetchData = async () => {
             try {
                 const produitsData = await produitService.get();
                 setProduits(produitsData);
+
                 const fournisseursData = await fournisseurService.get();
                 setFournisseurs(fournisseursData);
-                setLoading(false);
             } catch (error) {
-                console.error("Erreur lors du chargement des données:", error);
-                setError("Erreur lors du chargement des données.");
+                console.error("❌ Erreur lors du chargement des données:", error);
+                setError("Impossible de récupérer les données.");
+            } finally {
                 setLoading(false);
             }
         };
         fetchData();
-    }, []);
+    }, [isOpen]);
 
-    // Gestion de la soumission du formulaire
+    // Soumission du formulaire
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
+        setSubmitting(true);
 
-        // Validation des données
         if (!dateRecu || !quantite || !idProduit || !idFournisseur) {
-            setError("Tous les champs sont obligatoires.");
+            setError("⚠️ Tous les champs sont obligatoires.");
+            setSubmitting(false);
             return;
         }
-        if (isNaN(quantite)) {
-            setError("La quantité doit être un nombre.");
+
+        if (isNaN(quantite) || quantite <= 0) {
+            setError("⚠️ La quantité doit être un nombre positif.");
+            setSubmitting(false);
             return;
         }
 
         try {
-            const formData = {
+            const recuData = {
                 dateRecu,
                 quantite: parseFloat(quantite),
                 idProduit,
                 idFournisseur,
             };
-            await onSubmit(formData); // Appelle la fonction de soumission transmise en props
-                    // Ensuite, créer le mouvement de stock (mouvement stock avec estSortie=0)
-            const mouvementData = {
-                idProduit,
-                quantite: parseFloat(quantite),
-                dateMouvement: dateRecu,
-                estSortie: 0,  // On définit estSortie à 0 pour l'entrée en stock
-                idRapport: 1,
-            };
 
-            // Appel API pour créer un mouvement de stock
-            await mouvementStockService.create(mouvementData); // On appelle une fonction apiService qui va gérer ça
+            await recuService.create(recuData);
+            console.log(recuData);
+            onSubmit(); // Callback après succès
+            onClose();  // Fermer la modale
 
-            // Réinitialisation du formulaire après une soumission réussie
-            setDateRecu('');
-            setQuantite('');
-            setIdProduit('');
-            setIdFournisseur('');
+            // Réinitialisation du formulaire
+            setDateRecu("");
+            setQuantite("");
+            setIdProduit("");
+            setIdFournisseur("");
         } catch (error) {
-            console.error('Erreur lors de la soumission:', error);
+            console.error("❌ Erreur lors de la soumission:", error);
             setError(error.response?.data?.message || "Une erreur est survenue.");
+        } finally {
+            setSubmitting(false);
         }
     };
 
-    // Affichage du formulaire ou d'un message de chargement
-    if (loading) return <div>Chargement...</div>;
+    if (!isOpen) return null; // Ne pas afficher la modale si elle est fermée
 
     return (
-        <form onSubmit={handleSubmit}>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white shadow-lg rounded-lg p-6 max-w-lg w-full relative">
+                <button onClick={onClose} className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl">
+                    &times;
+                </button>
 
-            {/* Champs du formulaire avec labels explicites */}
-            <label htmlFor="dateRecu">Date de réception :</label>
-            <input type="date" id="dateRecu" value={dateRecu} onChange={(e) => setDateRecu(e.target.value)} required />
+                <h2 className="text-xl font-bold text-gray-700 mb-4">Ajouter un reçu</h2>
 
-            <label htmlFor="quantite">Quantité :</label>
-            <input type="number" id="quantite" value={quantite} onChange={(e) => setQuantite(e.target.value)} required />
+                {loading ? (
+                    <div className="text-center text-gray-600">Chargement des données...</div>
+                ) : (
+                    <form onSubmit={handleSubmit}>
+                        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
-            {/* Sélection du produit et du fournisseur à partir des données récupérées */}
-            <label htmlFor="idProduit">Produit :</label>
-            <select id="idProduit" value={idProduit} onChange={(e) => setIdProduit(e.target.value)} required>
-                <option value="">Sélectionnez un produit</option>
-                {produits.map(produit => (
-                    <option key={produit.idProduit} value={produit.idProduit}>
-                        {produit.nomProduit}
-                    </option>
-                ))}
-            </select>
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dateRecu">
+                            Date de réception :
+                        </label>
+                        <input
+                            type="date"
+                            id="dateRecu"
+                            value={dateRecu}
+                            onChange={(e) => setDateRecu(e.target.value)}
+                            required
+                            className="w-full p-2 border rounded-md mb-3"
+                        />
 
-            <label htmlFor="idFournisseur">Fournisseur :</label>
-            <select id="idFournisseur" value={idFournisseur} onChange={(e) => setIdFournisseur(e.target.value)} required>
-                <option value="">Sélectionnez un fournisseur</option>
-                {fournisseurs.map(fournisseur => (
-                    <option key={fournisseur.idFournisseur} value={fournisseur.idFournisseur}>
-                        {fournisseur.nomFournisseur}
-                    </option>
-                ))}
-            </select>
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="quantite">
+                            Quantité :
+                        </label>
+                        <input
+                            type="number"
+                            id="quantite"
+                            value={quantite}
+                            onChange={(e) => setQuantite(e.target.value)}
+                            required
+                            className="w-full p-2 border rounded-md mb-3"
+                        />
 
-            <button type="submit">Enregistrer</button>
-        </form>
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="idProduit">
+                            Produit :
+                        </label>
+                        <select
+                            id="idProduit"
+                            value={idProduit}
+                            onChange={(e) => setIdProduit(e.target.value)}
+                            required
+                            className="w-full p-2 border rounded-md mb-3"
+                        >
+                            <option value="">Sélectionnez un produit</option>
+                            {produits.map((produit) => (
+                                <option key={produit.idProduit} value={produit.idProduit}>
+                                    {produit.nomProduit}
+                                </option>
+                            ))}
+                        </select>
+
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="idFournisseur">
+                            Fournisseur :
+                        </label>
+                        <select
+                            id="idFournisseur"
+                            value={idFournisseur}
+                            onChange={(e) => setIdFournisseur(e.target.value)}
+                            required
+                            className="w-full p-2 border rounded-md mb-3"
+                        >
+                            <option value="">Sélectionnez un fournisseur</option>
+                            {fournisseurs.map((fournisseur) => (
+                                <option key={fournisseur.idFournisseur} value={fournisseur.idFournisseur}>
+                                    {fournisseur.nomFournisseur}
+                                </option>
+                            ))}
+                        </select>
+
+                        <button
+                            type="submit"
+                            disabled={submitting}
+                            className={`w-full p-2 text-white rounded-md transition ${
+                                submitting ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
+                            }`}
+                        >
+                            {submitting ? "Enregistrement..." : "Enregistrer"}
+                        </button>
+                    </form>
+                )}
+            </div>
+        </div>
     );
 };
 

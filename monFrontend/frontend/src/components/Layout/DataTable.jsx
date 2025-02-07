@@ -1,13 +1,15 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, ChevronDown, Pencil } from "lucide-react";
 
-const DataTable = ({ data, editableColumns, rowsPerPage }) => {
+const DataTable = ({ data, editableColumns, rowsPerPage, onUpdateStock }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [editableData, setEditableData] = useState(data);
   const [editingCell, setEditingCell] = useState(null);
+  const [tempValue, setTempValue] = useState(""); // Valeur temporaire en cours d'édition
+
   useEffect(() => {
     setEditableData(data);
   }, [data]);
@@ -19,7 +21,6 @@ const DataTable = ({ data, editableColumns, rowsPerPage }) => {
     )
   );
 
-
   const sortedData = sortBy
     ? [...filteredData].sort((a, b) => (a[sortBy] > b[sortBy] ? 1 : -1))
     : filteredData;
@@ -28,16 +29,34 @@ const DataTable = ({ data, editableColumns, rowsPerPage }) => {
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedData = sortedData.slice(startIndex, startIndex + rowsPerPage);
 
-  // Fonction pour modifier une cellule
-  const handleCellChange = (rowIndex, colName, value) => {
-    const updatedData = [...editableData];
-    updatedData[rowIndex][colName] = value;
-    setEditableData(updatedData);
-    
+  // Mettre à jour la valeur temporaire sans affecter immédiatement le tableau
+  const handleCellChange = (value) => {
+    setTempValue(value);
   };
-  console.log("Données reçues dans DataTable :", data);
-  console.log("Colonnes détectées :", data.length > 0 ? Object.keys(data[0]) : "Aucune donnée");
-  
+
+  // Fonction pour valider la mise à jour (lorsque l'utilisateur appuie sur Entrée)
+  const handleKeyDown = async (e, rowIndex, colName) => {
+    if (e.key === "Enter") {
+      const newValue = tempValue.trim() === "" ? 0 : parseFloat(tempValue) || 0;
+      setEditingCell(null); // Quitte le mode édition
+
+      const updatedData = [...editableData];
+      updatedData[rowIndex] = { ...updatedData[rowIndex], [colName]: newValue };
+      setEditableData(updatedData); // Mise à jour immédiate du tableau
+
+      if (onUpdateStock) {
+        try {
+          await onUpdateStock(updatedData[rowIndex]["Produit"], colName, newValue);
+          console.log("✅ Mise à jour réussie !");
+        } catch (error) {
+          console.error("❌ Erreur lors de la mise à jour du stock", error);
+        }
+      } else {
+        console.error("❌ Erreur : `onUpdateStock` n'est pas défini !");
+      }
+    }
+  };
+
   return (
     <div className="p-4 bg-white rounded-lg">
       {/* Barre de recherche */}
@@ -90,7 +109,9 @@ const DataTable = ({ data, editableColumns, rowsPerPage }) => {
           <thead>
             <tr className="bg-white">
               {columns.map((col) => (
-                <th key={col} className="border p-2 overflow-hidden text-ellipsis whitespace-nowrap " >{col}</th>
+                <th key={col} className="border p-2 overflow-hidden text-ellipsis whitespace-nowrap">
+                  {col}
+                </th>
               ))}
             </tr>
           </thead>
@@ -104,29 +125,33 @@ const DataTable = ({ data, editableColumns, rowsPerPage }) => {
                       <td
                         key={col}
                         className={`border p-2 relative group ${isEditable ? "bg-blue-200" : ""}`}
-                        onClick={() => isEditable && setEditingCell(`${rowIndex}-${col}`)}
+                        onClick={() => {
+                          if (isEditable) {
+                            setEditingCell(`${rowIndex}-${col}`);
+                            setTempValue(editableData[rowIndex][col]); // Stocker la valeur initiale
+                          }
+                        }}
                       >
-                      {editingCell === `${rowIndex}-${col}` ? (
-                       <input
-                       type="text"
-                       value={item[col]}
-                       onChange={(e) => handleCellChange(rowIndex, col, e.target.value)}
-                       onBlur={() => setEditingCell(null)}
-                       onKeyDown={(e) => {
-                         if (e.key === "Enter") setEditingCell(null);
-                       }}
-                       className="w-full p-1 border border-gray-300 rounded-md text-center" // Largeur fixe pour 4 chiffres
-                       autoFocus
-                     />
-                      ) : (
-                        <div className="flex items-center justify-center">
-                        {item[col]}
-                        {isEditable && <Pencil className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 cursor-pointer ml-4" />}
-                      </div>
-                      )}
-                    </td>
-                   );
-                 })}
+                        {editingCell === `${rowIndex}-${col}` ? (
+                          <input
+                            type="text"
+                            value={tempValue} // Utilisation de tempValue
+                            onChange={(e) => handleCellChange(e.target.value)}
+                            onKeyDown={(e) => handleKeyDown(e, rowIndex, col)}
+                            className="w-full p-1 border border-gray-300 rounded-md text-center"
+                            autoFocus
+                          />
+                        ) : (
+                          <div className="flex items-center justify-center">
+                            {editableData[rowIndex][col]} {/* Garde la valeur modifiée */}
+                            {isEditable && (
+                              <Pencil className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 cursor-pointer ml-4" />
+                            )}
+                          </div>
+                        )}
+                      </td>
+                    );
+                  })}
                 </tr>
               ))
             ) : (
@@ -149,9 +174,7 @@ const DataTable = ({ data, editableColumns, rowsPerPage }) => {
           <div className="flex gap-2">
             <button
               className={`px-3 py-1 rounded-md ${
-                currentPage === 1
-                  ? "bg-gray-300 cursor-not-allowed"
-                  : "bg-gray-200 hover:bg-gray-300"
+                currentPage === 1 ? "bg-gray-300 cursor-not-allowed" : "bg-gray-200 hover:bg-gray-300"
               }`}
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
@@ -160,13 +183,9 @@ const DataTable = ({ data, editableColumns, rowsPerPage }) => {
             </button>
             <button
               className={`px-3 py-1 rounded-md ${
-                currentPage === totalPages
-                  ? "bg-gray-300 cursor-not-allowed"
-                  : "bg-gray-200 hover:bg-gray-300"
+                currentPage === totalPages ? "bg-gray-300 cursor-not-allowed" : "bg-gray-200 hover:bg-gray-300"
               }`}
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
             >
               <ChevronRight className="w-4 h-4" />
