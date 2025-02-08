@@ -11,7 +11,7 @@ import Profile_V from "./pages/pages_vendeur/Profile_V";
 import H_Montant from "./pages/pages_vendeur/H_Montant";
 import H_Lot from "./pages/pages_vendeur/H_Lot";
 import RecuList from "./components/Recu/RecuList";
-import ProduitForm from "./components/Produit/ProduitForm";
+import ProduitFormulaire from "./pages/pages_magasinier/ProduitFormulaire";
 import Fournisseurs from "./pages/pages_magasinier/Fournisseur";
 import Login from "./pages/Login";
 import Dashboard_R from "./pages/pages_rguichet/Dashboard_R";
@@ -32,7 +32,7 @@ function App() {
         <Route path="/fournisseurs" element={<Fournisseurs />} />
         
         <Route path="/reculist" element={<RecuList />} />
-        <Route path="/produit" element={<ProduitForm />} />
+        <Route path="/produit" element={<ProduitFormulaire />} />
         <Route path="/dashboard_M" element={<Dashboard_M />} />
         <Route path="/entree" element={<Entree/>} />
         <Route path="/sortie" element={<Sortie/>} />

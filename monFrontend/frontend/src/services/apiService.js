@@ -89,6 +89,7 @@ export const lotsTicketService = new ApiService('lotstickets');
 export const mouvementStockService = new ApiService('mouvementstocks');
 export const periodeService = new ApiService('periodes');
 export const produitService = new ApiService('produits');
+export const produitEnvoieService = new ApiService('ProduitEnvoie');
 export const rapportService = new ApiService('rapports');
 export const recuService = new ApiService('recus');
 export const reservationService = new ApiService('reservations');

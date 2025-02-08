@@ -3,7 +3,6 @@ import Sidebar from "../../components/Layout/Sidebar";
 import Header from "../../components/Layout/Header";
 import DataTable from "../../components/Layout/DataTable";
 import { menuItems,userOptions } from "../../components/Layout/Layout_M/SidebarData_M";
-
 import { produitService } from "../../services/apiService";
 
 const Stock = () => {
@@ -23,9 +22,8 @@ const Stock = () => {
 
   const editableColumns = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 
-  const rowsPerPage=5;
+  const rowsPerPage=8;
 
- 
   useEffect(() => {
     const fetchProduits = async () => {
         try {
