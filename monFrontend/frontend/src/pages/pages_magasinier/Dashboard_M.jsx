@@ -15,7 +15,7 @@ const Dashboard_M = () => {
       {/* Contenu principal */}
       <div className="flex-1 flex flex-col h-screen">
         {/* En-tête */}
-        <Header h_title="Tableau de bord" h_role="Vendeur de ticket" h_user="Soumana" />
+        <Header h_title="Tableau de bord" h_role="Magasinier" h_user="Soumana" />
 
         {/* Contenu du tableau de bord sans débordement */}
         <div className="flex-1 overflow-hidden p-0">

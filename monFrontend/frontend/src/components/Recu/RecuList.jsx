@@ -135,7 +135,7 @@ const RecuList = () => {
 
         {/* Contenu principal */}
         <div className="flex-1 flex flex-col h-screen">
-        <Header h_title="Reçus" h_role="Magazinier" h_user="Soumana" />
+        <Header h_title="Reçus" h_role="Magasinier" h_user="Soumana" />
 
         <div className="flex-1 overflow-hidden p-1">
         <div className="container mx-auto p-4">
