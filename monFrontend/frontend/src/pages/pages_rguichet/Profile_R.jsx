@@ -1,10 +1,10 @@
 import React from "react";
+import Profile from "../../components/Layout/Profile";
 import Sidebar from "../../components/Layout/Sidebar";
 import Header from "../../components/Layout/Header";
-import Profile from "../../components/Layout/Profile";
-import { menuItems, userOptions } from "../../components/Layout/Layout_M/SidebarData_M";
+import { menuItems, userOptions } from "../../components/Layout/Layout_R/SidebarData_R";
 
-const Profile_M = () => {
+const Profile_R = () => {
   const user = {
     profilePicture: "https://via.placeholder.com/150",
     fullName: "Soumana",
@@ -20,7 +20,7 @@ const Profile_M = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen">
         {/* Header */}
-        <Header h_title="Profile" h_role="Magasinier" h_user="Soumana" />
+        <Header h_title="Tableau de bord" h_role="Vendeur de ticket" h_user="Soumana" />
 
         {/* Dashboard Content */}
         <div className="flex-1 overflow-hidden p-0 flex items-center justify-center">
@@ -31,4 +31,4 @@ const Profile_M = () => {
   );
 };
 
-export default Profile_M;
+export default Profile_R;

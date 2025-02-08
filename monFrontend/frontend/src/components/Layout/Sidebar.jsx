@@ -41,6 +41,7 @@ const Sidebar = ({ menuItems, userOptions }) => {
               >
                 <span className="h-5 w-5 mr-3 flex-shrink-0">{item.icon}</span>
                 <span
+                 style={{ wordBreak: "break-word" }}
                   className={`transition-opacity duration-500 whitespace-nowrap ${
                     isOpen ? "opacity-100" : "opacity-0"
                   }`}

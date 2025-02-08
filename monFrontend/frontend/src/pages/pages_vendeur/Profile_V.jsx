@@ -1,10 +1,8 @@
-import Profile from "../../components/Layout/Profile";
 import React from "react";
+import Profile from "../../components/Layout/Profile";
 import Sidebar from "../../components/Layout/Sidebar";
 import Header from "../../components/Layout/Header";
-import { menuItems,userOptions } from "../../components/Layout/Layout_V/SidebarData_V";
-import { Columns2, FileClock, User, LogOut } from "lucide-react";
-
+import { menuItems, userOptions } from "../../components/Layout/Layout_V/SidebarData_V";
 
 const Profile_V = () => {
   const user = {
@@ -14,22 +12,23 @@ const Profile_V = () => {
     bio: "Je suis un vendeur de ticket passionné par mon travail.",
   };
 
-return (
+  return (
     <div className="h-screen flex w-full overflow-hidden">
-      {/* Barre latérale */}
+      {/* Sidebar */}
       <Sidebar title="My Dashboard" menuItems={menuItems} userOptions={userOptions} />
 
-      {/* Contenu principal */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen">
-        {/* En-tête */}
+        {/* Header */}
         <Header h_title="Tableau de bord" h_role="Vendeur de ticket" h_user="Soumana" />
 
-        {/* Contenu du tableau de bord sans débordement */}
-        <div className="flex-1 overflow-hidden p-0">
-        <Profile user={user} editable={true} />
+        {/* Dashboard Content */}
+        <div className="flex-1 overflow-hidden p-0 flex items-center justify-center">
+          <Profile user={user} editable={true} />
         </div>
       </div>
     </div>
   );
 };
-export default Profile_V
+
+export default Profile_V;
