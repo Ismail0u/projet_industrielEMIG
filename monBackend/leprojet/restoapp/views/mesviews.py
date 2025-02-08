@@ -59,11 +59,15 @@ class BaseViewSet(viewsets.ModelViewSet):
 
 # Définition des ViewSets spécifiques, héritant de BaseViewSet
 from ..models import Produit, Categorie, Utilisateur, Etudiant, Fournisseur, GestionTickets, Jour, LotsTicket, MouvementStock, Periode, Rapport, Recu, Reservation, Stock, Ticket, TypeRapport
-from ..serializers import ProduitSerializer, CategorieSerializer, UtilisateurSerializer, EtudiantSerializer, FournisseurSerializer, GestionTicketsSerializer, JourSerializer, LotsTicketSerializer, MouvementStockSerializer, PeriodeSerializer, RapportSerializer, RecuSerializer, ReservationSerializer, StockSerializer, TicketSerializer, TypeRapportSerializer
+from ..serializers import ProduitSerializer, CategorieSerializer, UtilisateurSerializer, EtudiantSerializer, FournisseurSerializer, GestionTicketsSerializer, JourSerializer, LotsTicketSerializer, MouvementStockSerializer, PeriodeSerializer, RapportSerializer, RecuSerializer, ReservationSerializer, StockSerializer, TicketSerializer, TypeRapportSerializer,ProduitEnvoieSerializer
 
 class ProduitViewSet(BaseViewSet):
     queryset = Produit.objects.all()
     serializer_class = ProduitSerializer
+    
+class ProduitEnvoieViewSet(BaseViewSet):
+    queryset = Produit.objects.all()
+    serializer_class = ProduitEnvoieSerializer
 
 class CategorieViewSet(BaseViewSet):
     queryset = Categorie.objects.all()

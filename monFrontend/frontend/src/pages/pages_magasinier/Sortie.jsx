@@ -83,7 +83,7 @@ const Sortie = () => {
                 <DataTable
                   data={produits}
                   editableColumns={editableColumns}
-                  rowsPerPage={6}
+                  rowsPerPage={8}
                   onUpdateStock={handleStockOut} // s On passe la fonction pour gérer la mise à jour
                 />
                 
