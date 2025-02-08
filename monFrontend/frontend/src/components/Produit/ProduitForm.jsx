@@ -49,7 +49,16 @@ const ProduitForm = ({ onProduitAjoute }) => {
 
     try {
       // 1️⃣ Ajouter le produit
-      const produit = await produitEnvoieService.create(formData);
+      const produitData = {
+        idProduit: formData.idProduit,
+        nomProduit: formData.nomProduit,
+        quantiteDisponible: 0,
+        seuilCritique: formData.seuilCritique,
+        ration: formData.ration,
+        idFournisseur: formData.idFournisseur,
+        idCategorie: formData.idCategorie,
+      };
+      const produit = await produitEnvoieService.create(produitData);
       console.log("Produit ajouté :", produit);
 
       // 2️⃣ Déterminer la date et l'id du jour
