@@ -81,7 +81,7 @@ const Entree = () => {
             <Sidebar title="My Dashboard" menuItems={menuItems} userOptions={userOptions} />
 
             <div className="flex-1 flex flex-col h-screen">
-                <Header h_title="Tableau de bord" h_role="Vendeur de ticket" h_user="Soumana" />
+                <Header h_title="Entrée en stock"  h_role="Magasinier" h_user="Soumana" />
 
                 <div className="flex-1 overflow-hidden p-1">
                     <DataTable
