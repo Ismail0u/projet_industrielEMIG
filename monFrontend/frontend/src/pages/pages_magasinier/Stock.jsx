@@ -58,8 +58,8 @@ const Stock = () => {
   {/* Section des cartes */}
   <div className="flex gap-4 mb-4">
     <div className="w-1/2 h-16 bg-white shadow-md rounded-lg p-2">
-      <h2 className="text-sm font-semibold text-gray-800 mb-1">Nombre de tickets vendus</h2>
-      <p className="text-sm text-gray-600">Contenu de la première carte.</p>
+      <h2 className="text-sm font-semibold text-gray-800 mb-1"></h2>
+      <p className="text-sm text-gray-600"></p>
     </div>
 
     <div className="w-1/2 h-16 bg-white shadow-md rounded-lg p-2">
