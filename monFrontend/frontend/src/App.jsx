@@ -17,6 +17,7 @@ import Login from "./pages/Login";
 import Dashboard_R from "./pages/pages_rguichet/Dashboard_R";
 import Reservation from "./pages/pages_rguichet/Reservation";
 import Profile_R from "./pages/pages_rguichet/Profile_R";
+import EtudiantForm from "./components/Etudiant/EtudiantFormulaire";
 
 
 function App() {

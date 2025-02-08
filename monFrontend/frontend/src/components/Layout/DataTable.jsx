@@ -154,7 +154,7 @@ const DataTable = ({ data, editableColumns, rowsPerPage, onUpdateStock }) => {
                             autoFocus
                           />
                         ) : (
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-center">
                             {editableData[startIndex + rowIndex][col]}
                             {isEditable && <Pencil className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 ml-2" />}
                           </div>
