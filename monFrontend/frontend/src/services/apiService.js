@@ -41,6 +41,7 @@ class ApiService {
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la création:', error);
+      console.log(data);
       throw error;
     }
   }

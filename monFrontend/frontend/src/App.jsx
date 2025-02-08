@@ -13,20 +13,21 @@ import H_Lot from "./pages/pages_vendeur/H_Lot";
 import RecuList from "./components/Recu/RecuList";
 import ProduitFormulaire from "./pages/pages_magasinier/produitFormulaire";
 import Fournisseurs from "./pages/pages_magasinier/Fournisseur";
-
+import EtudiantForm from "./components/Etudiant/EtudiantFormulaire";
 
 function App() {
   return (
     <Router>
       <Routes>
 
-         <Route path="/" element={<Navigate to="/Dashboard_M" />} />
+        <Route path="/" element={<Navigate to="/Dashboard_M" />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/H_lot" element={<H_Lot />} />
         <Route path="/H_montant" element={<H_Montant />} />
         <Route path="/profile_M" element={<Profile_M />} />
         <Route path="/fournisseurs" element={<Fournisseurs />} />
         
+        <Route path="/etudiant" element={<EtudiantForm />} />
         <Route path="/reculist" element={<RecuList />} />
         <Route path="/produit" element={<ProduitFormulaire />} />
         <Route path="/dashboard_M" element={<Dashboard_M />} />
