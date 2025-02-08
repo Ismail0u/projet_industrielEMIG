@@ -11,9 +11,13 @@ import Profile_V from "./pages/pages_vendeur/Profile_V";
 import H_Montant from "./pages/pages_vendeur/H_Montant";
 import H_Lot from "./pages/pages_vendeur/H_Lot";
 import RecuList from "./components/Recu/RecuList";
-import ProduitFormulaire from "./pages/pages_magasinier/produitFormulaire";
+import ProduitFormulaire from "./pages/pages_magasinier/ProduitFormulaire";
 import Fournisseurs from "./pages/pages_magasinier/Fournisseur";
-import EtudiantForm from "./components/Etudiant/EtudiantFormulaire";
+import Login from "./pages/Login";
+import Dashboard_R from "./pages/pages_rguichet/Dashboard_R";
+import Reservation from "./pages/pages_rguichet/Reservation";
+import Profile_R from "./pages/pages_rguichet/Profile_R";
+
 
 function App() {
   return (
@@ -35,8 +39,14 @@ function App() {
         <Route path="/sortie" element={<Sortie/>} />
         <Route path="/stock" element={<Stock />} />
         <Route path="/profile_V" element={<Profile_V />} />
+
+        <Route path="/dashboard_R" element={<Dashboard_R/>} />
+        <Route path="/reservation" element={<Reservation />} />
+        <Route path="/profile_R" element={<Profile_R />} />
+
+
         
-        
+        <Route path="/logout" element={<Login/>} />
 
       </Routes>
     </Router>

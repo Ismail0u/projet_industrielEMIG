@@ -91,7 +91,7 @@ const DataTable = ({ data, editableColumns, rowsPerPage, onUpdateStock }) => {
               <ChevronDown className="w-4 h-4" />
             </button>
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-300 rounded-md shadow-lg">
+              <div className="absolute right-0 mt-2 w-32 bg-white bg-opacity-100 border border-gray-300 rounded-md shadow-lg z-50">
                 {columns.map((col) => (
                   <button
                     key={col}
