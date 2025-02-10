@@ -17,6 +17,7 @@ import Login from "./pages/Login";
 import Dashboard_R from "./pages/pages_rguichet/Dashboard_R";
 import Reservation from "./pages/pages_rguichet/Reservation";
 import Profile_R from "./pages/pages_rguichet/Profile_R";
+import EtudiantForm from "./components/Etudiant/EtudiantFormulaire";
 
 
 function App() {
@@ -24,13 +25,14 @@ function App() {
     <Router>
       <Routes>
 
-         <Route path="/" element={<Navigate to="/Dashboard_M" />} />
+        <Route path="/" element={<Navigate to="/Dashboard_M" />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/H_lot" element={<H_Lot />} />
         <Route path="/H_montant" element={<H_Montant />} />
         <Route path="/profile_M" element={<Profile_M />} />
         <Route path="/fournisseurs" element={<Fournisseurs />} />
         
+        <Route path="/etudiant" element={<EtudiantForm />} />
         <Route path="/reculist" element={<RecuList />} />
         <Route path="/produit" element={<ProduitFormulaire />} />
         <Route path="/dashboard_M" element={<Dashboard_M />} />

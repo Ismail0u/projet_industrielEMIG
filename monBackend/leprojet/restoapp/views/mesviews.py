@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,action
 from decimal import Decimal
 from django.db import transaction
 
@@ -80,6 +80,14 @@ class UtilisateurViewSet(BaseViewSet):
 class EtudiantViewSet(BaseViewSet):
     queryset = Etudiant.objects.all()
     serializer_class = EtudiantSerializer
+    
+    @action(detail=False, methods=["post"])
+    def bulk_create(self, request):
+        serializer = self.get_serializer(data=request.data, many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class FournisseurViewSet(BaseViewSet):
     queryset = Fournisseur.objects.all()
