@@ -4,6 +4,7 @@ import Sidebar from "../../components/Layout/Sidebar";
 import Header from "../../components/Layout/Header";
 import DataTable from "../../components/Layout/DataTable";
 import { menuItems, userOptions } from "../../components/Layout/Layout_R/SidebarData_R";
+import { reservationService } from "../../services/apiService";
 
 const Reservation = () => {
     const [reservations, setReservations] = useState([]);
@@ -19,7 +20,7 @@ const Reservation = () => {
         setError(null);   // Clear any previous errors
 
         try {
-            const response = await axios.get("/api/reservations/"); // Your API endpoint
+            const response = await reservationService.get(); // Your API endpoint
             console.log("📥 Reservations data received:", response.data);
             setReservations(response.data);
         } catch (err) {
@@ -33,8 +34,8 @@ const Reservation = () => {
     const tableData = reservations.length > 0
         ? reservations.map((reservation) => ({
             id: reservation.idReservation, // Important: Add a unique ID!
-            Date: reservation.date_reservation, // Use snake_case from your model
-            Etudiant: reservation.etudiant.nom, // Access related data (adjust as needed)
+            Date: reservation.dateReservation, // Use snake_case from your model
+            Etudiant: reservation.idEtudiant, // Access related data (adjust as needed)
             Jour: reservation.jour.nom_jour, // Access related data
             Periode: reservation.periode.nom_periode, // Access related data
             // ... other fields from your Reservation model
