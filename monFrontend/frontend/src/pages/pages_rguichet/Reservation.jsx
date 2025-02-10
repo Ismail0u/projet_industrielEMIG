@@ -16,20 +16,26 @@ const Reservation = () => {
     }, []);
 
     const fetchReservations = async () => {
-        setLoading(true); // Set loading to true before fetching
-        setError(null);   // Clear any previous errors
-
+        setLoading(true);
+        setError(null);
+    
         try {
-            const response = await reservationService.get(); // Your API endpoint
-            console.log("📥 Reservations data received:", response.data);
+            const response = await reservationService.get();
+            console.log("📥 Données reçues :", response);
+    
+            if (!response || !response.data) {
+                throw new Error("Aucune donnée reçue de l'API.");
+            }
+    
             setReservations(response.data);
         } catch (err) {
-            console.error("❌ Error fetching reservations:", err);
-            setError("Failed to fetch reservations. Please try again later."); // Set error message
+            console.error("❌ Erreur lors de la récupération des réservations :", err);
+            setError(err.message || "Impossible de récupérer les réservations.");
         } finally {
-            setLoading(false); // Set loading to false after fetch, regardless of success/failure
+            setLoading(false);
         }
     };
+    
 
     const tableData = reservations.length > 0
         ? reservations.map((reservation) => ({

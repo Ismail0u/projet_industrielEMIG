@@ -44,6 +44,8 @@ function App() {
         <Route path="/dashboard_R" element={<Dashboard_R/>} />
         <Route path="/reservation" element={<Reservation />} />
         <Route path="/profile_R" element={<Profile_R />} />
+        <Route path="/listeEtudiant" element={<EtudiantForm />} />
+        
 
 
         
