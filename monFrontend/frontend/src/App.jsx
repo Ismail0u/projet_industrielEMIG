@@ -18,6 +18,7 @@ import Dashboard_R from "./pages/pages_rguichet/Dashboard_R";
 import Reservation from "./pages/pages_rguichet/Reservation";
 import Profile_R from "./pages/pages_rguichet/Profile_R";
 import EtudiantForm from "./components/Etudiant/EtudiantFormulaire";
+import ListeEtudiant from "./pages/pages_rguichet/ListeEtudiant";
 
 
 function App() {
@@ -44,7 +45,7 @@ function App() {
         <Route path="/dashboard_R" element={<Dashboard_R/>} />
         <Route path="/reservation" element={<Reservation />} />
         <Route path="/profile_R" element={<Profile_R />} />
-        <Route path="/listeEtudiant" element={<EtudiantForm />} />
+        <Route path="/listeEtudiant" element={<ListeEtudiant />} />
         
 
 

@@ -8,7 +8,7 @@ const DashboardContent_R= () => {
         
         {/* Cartes réduites */}
         <div className="row-span-2 col-span-2 bg-white shadow-md rounded-lg p-4">
-          <h2 className="text-sm font-semibold text-gray-800 mb-2">Nombre de tickets vendus</h2>
+          <h2 className="text-sm font-semibold text-gray-800 mb-2">Nombre de réservations</h2>
           <p className="text-sm text-gray-600">Contenu de la première carte.</p>
         </div>
 

@@ -80,14 +80,24 @@ class UtilisateurViewSet(BaseViewSet):
 class EtudiantViewSet(BaseViewSet):
     queryset = Etudiant.objects.all()
     serializer_class = EtudiantSerializer
+
+    @action(detail=False, methods=["delete"])
+    def delete_all(self,request):
+        print(f"Requête reçue de l'utilisateur {request.user}")
+        Etudiant.objects.all().delete()
+        return Response({"message": "Tous les étudiants ont été supprimés"}, status=status.HTTP_204_NO_CONTENT)
     
     @action(detail=False, methods=["post"])
     def bulk_create(self, request):
+
         serializer = self.get_serializer(data=request.data, many=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+
 
 class FournisseurViewSet(BaseViewSet):
     queryset = Fournisseur.objects.all()
@@ -136,6 +146,7 @@ class TicketViewSet(BaseViewSet):
 class TypeRapportViewSet(BaseViewSet):
     queryset = TypeRapport.objects.all()
     serializer_class = TypeRapportSerializer
+    
 
 @api_view(['POST'])
 def sortie_stock(request):
