@@ -83,6 +83,9 @@ class ApiService {
 export const utilisateurService = new ApiService('utilisateurs');
 export const categorieService = new ApiService('categories'); // Décommenté pour inclure les catégories
 export const etudiantService = new ApiService('etudiants');
+
+etudiantService.bulk_create = (data) => axios.post(`${API_URL}/etudiants/bulk_create/`, data);
+
 export const fournisseurService = new ApiService('fournisseurs');
 export const gestionTicketService = new ApiService('gestiontickets');
 export const jourService = new ApiService('jours');

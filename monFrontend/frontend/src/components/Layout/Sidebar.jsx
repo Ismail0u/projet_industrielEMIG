@@ -7,7 +7,7 @@ const Sidebar = ({ menuItems, userOptions }) => {
 
   return (
     <div
-      className={`${isOpen ? "w-44" : "w-16"} text-white h-screen flex flex-col transition-all duration-500 bg-blue-600`}
+      className={`${isOpen ? "w-48" : "w-16"} text-white h-screen flex flex-col transition-all duration-500 bg-blue-600`}
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
