@@ -52,6 +52,7 @@ const H_Montant = () => {
             rowsPerPage={rowsPerPage}
             editableColumns={editableColumns}
             headers={["Montant Remis", "Date de la Remise"]}
+            pdfFileName="Historique_Montant_fiche"
           />
         </div>
       </div>

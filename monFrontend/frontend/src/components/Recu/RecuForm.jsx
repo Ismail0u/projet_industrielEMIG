@@ -3,10 +3,10 @@ import { produitService, fournisseurService, recuService } from "../../services/
 
 const RecuForm = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
     // États du formulaire
-    const [dateRecu, setDateRecu] = useState(initialData.dateRecu || "");
-    const [quantite, setQuantite] = useState(initialData.quantite || "");
-    const [idProduit, setIdProduit] = useState(initialData.idProduit || "");
-    const [idFournisseur, setIdFournisseur] = useState(initialData.idFournisseur || "");
+    const [dateRecu, setDateRecu] = useState("");
+    const [quantite, setQuantite] = useState("");
+    const [idProduit, setIdProduit] = useState("");
+    const [idFournisseur, setIdFournisseur] = useState("");
 
     // États des produits et fournisseurs
     const [produits, setProduits] = useState([]);
@@ -17,16 +17,27 @@ const RecuForm = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
 
-    // Charger les produits et fournisseurs au montage
+    // ⚡ Met à jour les valeurs lorsque `initialData` change
     useEffect(() => {
-        if (!isOpen) return; // Charger les données seulement si la modale est ouverte
+        if (initialData) {
+            setDateRecu(initialData.dateRecu || "");
+            setQuantite(initialData.quantite || "");
+            setIdProduit(initialData.idProduit || "");
+        }
+    }, [initialData]);
+
+    // Charger les produits et fournisseurs uniquement quand la modale s'ouvre
+    useEffect(() => {
+        if (!isOpen) return;
 
         const fetchData = async () => {
+            setLoading(true);
             try {
-                const produitsData = await produitService.get();
+                const [produitsData, fournisseursData] = await Promise.all([
+                    produitService.get(),
+                    fournisseurService.get()
+                ]);
                 setProduits(produitsData);
-
-                const fournisseursData = await fournisseurService.get();
                 setFournisseurs(fournisseursData);
             } catch (error) {
                 console.error("❌ Erreur lors du chargement des données:", error);
@@ -65,7 +76,7 @@ const RecuForm = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
             };
 
             await recuService.create(recuData);
-            console.log(recuData);
+            console.log("✅ Données envoyées :", recuData);
             onSubmit(); // Callback après succès
             onClose();  // Fermer la modale
 
@@ -132,6 +143,7 @@ const RecuForm = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
                             onChange={(e) => setIdProduit(e.target.value)}
                             required
                             className="w-full p-2 border rounded-md mb-3"
+                            disabled={!!idProduit} // Désactiver si l'ID est déjà fourni
                         >
                             <option value="">Sélectionnez un produit</option>
                             {produits.map((produit) => (

@@ -53,9 +53,14 @@ const Entree = () => {
             alert("✅ Mise à jour réussie !");
 
             // Stocker les données du reçu et afficher le formulaire
-            setRecuData({ produit, jour, quantite });
+            const produitInfo = produits.find((p) => p.Produit === produit); // Trouver l'ID du produit
+            setRecuData({
+                idProduit: produitInfo?.idProduit || "", // Récupérer l'ID du produit
+                produit: produit, // Ajouter le nom du produit
+                quantite: quantite,
+                dateRecu: new Date().toISOString().split("T")[0], // Ajouter la date actuelle
+            });
             setShowRecuForm(true);
-
         } catch (error) {
             console.error("❌ Erreur lors de la mise à jour du stock :", error);
             alert("❌ Une erreur est survenue lors de la mise à jour du stock.");
@@ -89,6 +94,7 @@ const Entree = () => {
                         editableColumns={editableColumns}
                         rowsPerPage={8}
                         onUpdateStock={handleStockOut}
+                        pdfFileName="Entree_fiche"
                     />
                 </div>
 
