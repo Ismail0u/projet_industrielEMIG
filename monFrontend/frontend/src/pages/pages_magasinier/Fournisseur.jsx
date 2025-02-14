@@ -77,7 +77,7 @@ const Fournisseurs = () => {
 
         <div className="flex-1 overflow-hidden p-1">
           {/* Affichage du tableau */}
-          <DataTable data={data} rowsPerPage={rowsPerPage} editableColumns={editableColumns} />
+          <DataTable data={data} rowsPerPage={rowsPerPage} editableColumns={editableColumns} pdfFileName="Liste_Fournisseur"/>
 
           {/* Bouton "Ajouter Fournisseur" en bas du tableau */}
           <div className="flex mt-4">

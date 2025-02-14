@@ -77,7 +77,7 @@ const Stock = () => {
 
           {/* Tableau */}
           <div className="bg-white shadow-md rounded-lg p-4">
-            <DataTable data={produits} editableColumns={editableColumns} rowsPerPage={rowsPerPage} />
+            <DataTable data={produits} editableColumns={editableColumns} rowsPerPage={rowsPerPage} pdfFileName="Stock_Fiche"/>
           </div>
         </div>
       </div>

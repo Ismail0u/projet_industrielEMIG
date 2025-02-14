@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, ChevronDown, Pencil, FileText } from "lucide
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
-const DataTable = ({ data, editableColumns, rowsPerPage, onUpdateStock }) => {
+const DataTable = ({ data, editableColumns, rowsPerPage, onUpdateStock,pdfFileName }) => {
   // États pour la recherche, le tri, la pagination et l'édition des cellules
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState(null);
@@ -37,6 +37,31 @@ const DataTable = ({ data, editableColumns, rowsPerPage, onUpdateStock }) => {
       )
     : filteredData;
 
+      // Met à jour la valeur temporaire lors de la modification d'une cellule
+    const handleCellChange = (value) => {
+      setTempValue(value);
+    };
+  // Gère la validation de la modification (lorsqu'on appuie sur Entrée)
+    const handleKeyDown = async (e, rowIndex, colName) => {
+      if (e.key === "Enter") {
+        const newValue = tempValue.trim() === "" ? 0 : parseFloat(tempValue) || 0;
+        setEditingCell(null); // Quitte le mode édition  
+        // Mise à jour locale des données
+        const updatedData = [...editableData];
+        updatedData[rowIndex] = { ...updatedData[rowIndex], [colName]: newValue };
+        setEditableData(updatedData);
+        // Envoi de la mise à jour au serveur si la fonction onUpdateStock est définie
+        if (onUpdateStock) {
+          try {
+            await onUpdateStock(updatedData[rowIndex]["Produit"], colName, newValue);
+            console.log("✅ Mise à jour réussie !");
+          } catch (error) {
+            console.error("❌ Erreur lors de la mise à jour du stock", error);
+          }
+        }
+      }
+    }
+
   // Pagination
   const totalPages = Math.ceil(sortedData.length / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -46,7 +71,6 @@ const DataTable = ({ data, editableColumns, rowsPerPage, onUpdateStock }) => {
   // Fonction pour exporter toutes les données en PDF
   const exportToPDF = () => {
     const pdf = new jsPDF("landscape");
-    
     // Ajouter un titre
     pdf.text(pdfFileName || "Données Exportées", 14, 10);
 
@@ -149,7 +173,7 @@ const DataTable = ({ data, editableColumns, rowsPerPage, onUpdateStock }) => {
                           <input
                             type="text"
                             value={tempValue}
-                            onChange={(e) => setTempValue(e.target.value)}
+                            onChange={(e) => handleCellChange(e.target.value)}
                             onKeyDown={(e) => handleKeyDown(e, startIndex + rowIndex, col)}
                             className="w-full p-1 border border-gray-300 rounded-md text-center"
                             autoFocus

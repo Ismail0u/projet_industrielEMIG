@@ -52,6 +52,7 @@ const H_Lot = () => {
             rowsPerPage={rowsPerPage}
             editableColumns={editableColumns}
             headers={["ID", "Type de Lot", "Nombre de Lot", "Date d'Ajout"]}
+            pdfFileName="Historique_Lots_fiche"
           />
         </div>
       </div>

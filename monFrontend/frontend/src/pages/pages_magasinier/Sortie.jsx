@@ -85,6 +85,7 @@ const Sortie = () => {
                   editableColumns={editableColumns}
                   rowsPerPage={8}
                   onUpdateStock={handleStockOut} // s On passe la fonction pour gérer la mise à jour
+                  pdfFileName="Sortie_fiche"
                 />
                 
 
