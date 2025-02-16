@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from "react";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import { produitService, fournisseurService, recuService } from "../../services/apiService";
+import logoEmig from "../../assets/images/logoEmig.jfif";
 
 const RecuForm = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
-    // États du formulaire
     const [dateRecu, setDateRecu] = useState("");
     const [quantite, setQuantite] = useState("");
     const [idProduit, setIdProduit] = useState("");
     const [idFournisseur, setIdFournisseur] = useState("");
-
-    // États des produits et fournisseurs
     const [produits, setProduits] = useState([]);
     const [fournisseurs, setFournisseurs] = useState([]);
-
-    // États de gestion
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+    const [recuData, setRecuData] = useState(null);
 
-    // ⚡ Met à jour les valeurs lorsque `initialData` change
     useEffect(() => {
         if (initialData) {
             setDateRecu(initialData.dateRecu || "");
@@ -26,7 +24,6 @@ const RecuForm = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
         }
     }, [initialData]);
 
-    // Charger les produits et fournisseurs uniquement quand la modale s'ouvre
     useEffect(() => {
         if (!isOpen) return;
 
@@ -49,7 +46,6 @@ const RecuForm = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
         fetchData();
     }, [isOpen]);
 
-    // Soumission du formulaire
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
@@ -76,15 +72,11 @@ const RecuForm = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
             };
 
             await recuService.create(recuData);
-            console.log("✅ Données envoyées :", recuData);
-            onSubmit(); // Callback après succès
-            onClose();  // Fermer la modale
+            console.log("✅ Reçu enregistré :", recuData);
+            setRecuData(recuData);
 
-            // Réinitialisation du formulaire
-            setDateRecu("");
-            setQuantite("");
-            setIdProduit("");
-            setIdFournisseur("");
+            onSubmit();
+            alert("✅ Reçu enregistré avec succès !");
         } catch (error) {
             console.error("❌ Erreur lors de la soumission:", error);
             setError(error.response?.data?.message || "Une erreur est survenue.");
@@ -93,7 +85,45 @@ const RecuForm = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
         }
     };
 
-    if (!isOpen) return null; // Ne pas afficher la modale si elle est fermée
+    const generatePDF = () => {
+        if (!recuData) return;
+
+        const produit = produits.find((p) => p.idProduit === recuData.idProduit);
+        const fournisseur = fournisseurs.find((f) => f.idFournisseur === recuData.idFournisseur);
+
+        const doc = new jsPDF();
+        doc.setFont("helvetica");
+        
+        // Ajouter le logo de l'EMIG
+        doc.addImage(logoEmig, "PNG", 14, 10, 25, 25); // Modifiez la position et la taille selon vos besoins
+        doc.setFontSize(14);
+        doc.text("École des Mines, de l'Industrie et de la Géologie (EMIG)", 50, 25);
+
+        doc.setFontSize(12);
+        doc.text("Reçu de Stock", 14, 40);
+
+        doc.autoTable({
+            startY: 50,
+            head: [["", ""]],
+            body: [
+                ["Date de réception", recuData.dateRecu],
+                ["Produit", produit?.nomProduit || "Inconnu"],
+                ["Quantité", recuData.quantite],
+                ["Fournisseur", fournisseur?.nomFournisseur || "Inconnu"],
+            ],
+        });
+
+        // Ajouter la mention que c'est le magasinier qui a fait le reçu
+        doc.text("Fait par le magasinier", 14, doc.lastAutoTable.finalY + 10);
+
+        // Ajouter la zone pour la signature
+        doc.text("Signature:", 14, doc.lastAutoTable.finalY + 30);
+        //doc.line(40, doc.lastAutoTable.finalY + 28, 100, doc.lastAutoTable.finalY + 28); // Ligne pour la signature
+
+        doc.save(`Recu_${recuData.dateRecu}.pdf`);
+    };
+
+    if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -110,40 +140,31 @@ const RecuForm = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
                     <form onSubmit={handleSubmit}>
                         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dateRecu">
-                            Date de réception :
-                        </label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">Date de réception :</label>
                         <input
                             type="date"
-                            id="dateRecu"
                             value={dateRecu}
                             onChange={(e) => setDateRecu(e.target.value)}
                             required
                             className="w-full p-2 border rounded-md mb-3"
                         />
 
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="quantite">
-                            Quantité :
-                        </label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">Quantité :</label>
                         <input
                             type="number"
-                            id="quantite"
                             value={quantite}
                             onChange={(e) => setQuantite(e.target.value)}
                             required
                             className="w-full p-2 border rounded-md mb-3"
                         />
 
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="idProduit">
-                            Produit :
-                        </label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">Produit :</label>
                         <select
-                            id="idProduit"
                             value={idProduit}
                             onChange={(e) => setIdProduit(e.target.value)}
                             required
                             className="w-full p-2 border rounded-md mb-3"
-                            disabled={!!idProduit} // Désactiver si l'ID est déjà fourni
+                            disabled={!!idProduit}
                         >
                             <option value="">Sélectionnez un produit</option>
                             {produits.map((produit) => (
@@ -153,11 +174,8 @@ const RecuForm = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
                             ))}
                         </select>
 
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="idFournisseur">
-                            Fournisseur :
-                        </label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">Fournisseur :</label>
                         <select
-                            id="idFournisseur"
                             value={idFournisseur}
                             onChange={(e) => setIdFournisseur(e.target.value)}
                             required
@@ -171,15 +189,15 @@ const RecuForm = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
                             ))}
                         </select>
 
-                        <button
-                            type="submit"
-                            disabled={submitting}
-                            className={`w-full p-2 text-white rounded-md transition ${
-                                submitting ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
-                            }`}
-                        >
-                            {submitting ? "Enregistrement..." : "Enregistrer"}
+                        <button type="submit" className="w-full p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600">
+                            Enregistrer
                         </button>
+
+                        {recuData && (
+                            <button type="button" onClick={generatePDF} className="mt-2 w-full p-2 text-white bg-green-500 rounded-md hover:bg-green-600">
+                                Télécharger le reçu PDF
+                            </button>
+                        )}
                     </form>
                 )}
             </div>
