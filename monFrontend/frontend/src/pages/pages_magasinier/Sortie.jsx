@@ -26,43 +26,56 @@ const Sortie = () => {
     // Fonction pour envoyer la mise à jour à l'API
     const handleStockOut = async (produit, jour, quantite) => {
       console.log("📤 Données envoyées :", { produit, jour, quantite });
-    
+  
       if (!produit || !jour || isNaN(quantite) || quantite < 0) {
-        console.error("❌ Erreur : Données invalides !");
-        return;
+          alert("❌ Erreur : Données invalides !");
+          return;
       }
-    
+  
       try {
-        // Envoyer la requête de mise à jour à l'API
-        const response = await sortieStock(produit, jour, quantite);
-        console.log("Réponse API :", response);
-    
-        // Mettre à jour l'état des produits après validation de l'API
-        setProduits((prevProduits) =>
-          prevProduits.map((p) => {
-            if (p.Produit === produit) {
-              const newProduit = { ...p, [jour]: quantite };
-    
-              // Recalculer le total
-              newProduit.Total = joursSemaine.reduce(
-                (total, j) => total + (parseFloat(newProduit[j]) || 0),
-                0
-              );
-    
-              return newProduit;
-            }
-            return p;
-          })
-        );
-    
-        // Retour visuel pour l'utilisateur
-        alert("✅ Mise à jour réussie !");
+          // Envoyer la requête à l'API
+          const response = await sortieStock(produit, jour, quantite);
+  
+          // Vérifier si l'API a renvoyé une erreur
+          if (response.error) {
+              alert(`❌ Erreur : ${response.error}`);
+              return;
+          }
+  
+          console.log("✅ Stock mis à jour avec succès !");
+          
+          // Mettre à jour l'affichage en modifiant l'état
+          setProduits((prevProduits) =>
+              prevProduits.map((p) => {
+                  if (p.Produit === produit) {
+                      const newProduit = { ...p, [jour]: quantite };
+  
+                      // Recalculer le total
+                      newProduit.Total = joursSemaine.reduce(
+                          (total, j) => total + (parseFloat(newProduit[j]) || 0),
+                          0
+                      );
+  
+                      return newProduit;
+                  }
+                  return p;
+              })
+          );
+  
+          // Message de succès
+          alert("✅ Mise à jour réussie !");
       } catch (error) {
-        console.error("❌ Erreur lors de la mise à jour du stock :", error);
-        alert("❌ Une erreur est survenue lors de la mise à jour du stock.");
+          console.error("❌ Erreur lors de la mise à jour du stock :", error);
+          
+          // Vérifier si l'erreur contient une réponse de l'API
+          if (error.response && error.response.data && error.response.data.error) {
+              alert(`❌ Erreur : ${error.response.data.error}`);
+          } else {
+              alert("❌ Une erreur est survenue lors de la mise à jour du stock.");
+          }
       }
-    };
-    
+  };
+  
     // Déterminer les colonnes modifiables
     const joursSemaine = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
     const jourActuel = joursSemaine[new Date().getDay()];
