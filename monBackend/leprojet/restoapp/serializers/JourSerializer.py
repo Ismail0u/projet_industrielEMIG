@@ -16,10 +16,10 @@ class JourSerializer(serializers.ModelSerializer):
        return obj.get_nbre_reserve_jour
     
     def get_nbre_reserve_lendemain_petitDej(self, obj):
-        return obj.get_nbre_reserve_lendemain('petitDej')
+        return obj.get_nbre_reserve_lendemain(1)
     
     def get_nbre_reserve_lendemain_dejeuner(self, obj):
-        return obj.get_nbre_reserve_lendemain('dejeuner')
+        return obj.get_nbre_reserve_lendemain(2)
 
     def get_nbre_reserve_lendemain_diner(self, obj):
-        return obj.get_nbre_reserve_lendemain('diner')
+        return obj.get_nbre_reserve_lendemain(3)

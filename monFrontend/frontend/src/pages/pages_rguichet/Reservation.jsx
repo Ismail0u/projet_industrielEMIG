@@ -87,6 +87,19 @@ const Reservation = () => {
       setLoading(false);
     }
   };
+  const getWeekStartDate = () => {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const diff = today.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+    return new Date(today.setDate(diff));
+  };
+
+  const getReservationDate = (dayOffset) => {
+    const weekStart = getWeekStartDate();
+    const reservationDate = new Date(weekStart);
+    reservationDate.setDate(weekStart.getDate() + dayOffset);
+    return reservationDate.toISOString().split("T")[0];
+  };
 
   const handleKeyDown = (event, idEtudiant, idJour, idPeriode) => {
     if (event.key === "Enter") {
@@ -101,11 +114,13 @@ const Reservation = () => {
     const key = `${idJour}-${idPeriode}`;
     const reservationId = studentReservations.get(key);
 
+    const jourIndex = jours.findIndex(j => j.idJour === idJour);
+    if (jourIndex === -1) return;
+    const dateReservation = getReservationDate(jourIndex);
+
     if (!reservationId) {
       // Création de la réservation
       try {
-        const today = new Date();
-        const dateReservation = today.toISOString().split("T")[0];
         const response = await reservationService.create({
           dateReservation,
           idEtudiant,
@@ -150,10 +165,11 @@ const Reservation = () => {
       for (const jour of jours) {
         for (const periode of periodes) {
           const key = `${jour.idJour}-${periode.idPeriode}`;
+          const jourIndex = jours.findIndex(j => j.idJour === jour.idJour);
+              if (jourIndex === -1) return;
+              const dateReservation = getReservationDate(jourIndex);  
           if (!studentReservations.has(key)) {
-            try {
-              const today = new Date();
-              const dateReservation = today.toISOString().split("T")[0];
+            try {        
               const response = await reservationService.create({
                 dateReservation,
                 idEtudiant,

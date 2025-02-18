@@ -14,20 +14,20 @@ class Jour(models.Model):
         from .reservation import Reservation
         return Reservation.objects.filter(idJour=self).count() # .count() est crucial
 
-    def get_nbre_reserve_lendemain(self, periode_nom):  # Pas besoin de @property ici
+    def get_nbre_reserve_lendemain(self, periode_id):
         from .periode import Periode
         from .reservation import Reservation
-        try:  # Gestion des erreurs si la période n'existe pas
-            periode = Periode.objects.get(nomPeriode=periode_nom)
+        try:
+            periode = Periode.objects.get(idPeriode=periode_id)
         except Periode.DoesNotExist:
-            return 0  # Ou une autre valeur par défaut en cas d'erreur
-        lendemain = timezone.now().date() + timezone.timedelta(days=1)
+            print(f"Période {periode_id} inexistante")
+            return 0
 
-        return Reservation.objects.filter(
-            dateReservation=lendemain,
-            idJour=self,
-            idPeriode=periode
-        ).count()  # .count() est crucial
+        lendemain = timezone.now().date() + timezone.timedelta(days=1)
+        count = Reservation.objects.filter(dateReservation=lendemain, idJour=self, idPeriode=periode).count()
+        
+        print(f"Réservations pour {lendemain} : {count}")
+        return count
 
     class Meta:
         managed = False
