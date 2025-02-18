@@ -13,11 +13,12 @@ const Reservation = () => {
   const [etudiants, setEtudiants] = useState([]);
   const [jours, setJours] = useState([]);
   const [periodes, setPeriodes] = useState([]);
+  // On stocke les réservations dans une Map : idEtudiant => Map(key = "idJour-idPeriode" => reservation object)
   const [reservations, setReservations] = useState(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // États pour les fonctionnalités de DataTable (recherche, tri et pagination)
+  // États pour le DataTable
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -26,9 +27,9 @@ const Reservation = () => {
 
   useEffect(() => {
     fetchData();
-    
   }, []);
 
+  // Récupération des données via les services API
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -37,48 +38,28 @@ const Reservation = () => {
         etudiantService.get(),
         jourService.get(),
         periodeService.get(),
-        reservationService.get() // Récupération des réservations existantes
+        reservationService.get()
       ]);
 
       setEtudiants(etudiantRes);
       setJours(jourRes);
       setPeriodes(periodeRes);
 
-      const getTodayReservationsCount = () => {
-        const today = new Date().toISOString().split("T")[0]; // Obtenir la date du jour
-        let lunchCount = 0;
-        let dinnerCount = 0;
-      
-        reservations.forEach((studentReservations) => {
-          studentReservations.forEach((reservationId, key) => {
-            const [jour, periode] = key.split("-");
-            const jourData = jours.find(j => j.idJour == jour);
-            const periodeData = periodes.find(p => p.idPeriode == periode);
-      
-            if (jourData?.dateJour === today) {
-              if (periodeData?.nomPeriode.toLowerCase().includes("déjeuner")) {
-                lunchCount++;
-              } else if (periodeData?.nomPeriode.toLowerCase().includes("dîner")) {
-                dinnerCount++;
-              }
-            }
-          });
-        });
-      
-        return { lunchCount, dinnerCount };
-      };
-
-      // Initialisation et remplissage de la Map des réservations
+      // Création de la Map initiale de réservations
       const initialReservations = new Map();
       etudiantRes.forEach(etudiant => {
         initialReservations.set(etudiant.idEtudiant, new Map());
       });
+
+      // Stocker l'objet réservation complet pour avoir accès à dateReservation
       reservationRes.forEach(reservation => {
         const { idReservation, idEtudiant, idJour, idPeriode } = reservation;
         const studentReservations = initialReservations.get(idEtudiant) || new Map();
-        studentReservations.set(`${idJour}-${idPeriode}`, idReservation);
+        const key = `${idJour}-${idPeriode}`;
+        studentReservations.set(key, reservation);
         initialReservations.set(idEtudiant, studentReservations);
       });
+
       setReservations(initialReservations);
     } catch (err) {
       console.error("Erreur lors du chargement des données :", err);
@@ -118,7 +99,7 @@ const Reservation = () => {
     if (jourIndex === -1) return;
     const dateReservation = getReservationDate(jourIndex);
 
-    if (!reservationId) {
+    if (!reservationObj) {
       // Création de la réservation
       try {
         const response = await reservationService.create({
@@ -127,14 +108,15 @@ const Reservation = () => {
           idJour,
           idPeriode
         });
-        studentReservations.set(key, response.idReservation);
+        // On stocke l'objet réservation complet retourné par l'API
+        studentReservations.set(key, response);
       } catch (error) {
         console.error("Erreur lors de la création de la réservation :", error);
       }
     } else {
       // Suppression de la réservation existante
       try {
-        await reservationService.delete(reservationId);
+        await reservationService.delete(reservationObj.idReservation);
         studentReservations.delete(key);
       } catch (error) {
         console.error("Erreur lors de la suppression de la réservation :", error);
@@ -144,24 +126,24 @@ const Reservation = () => {
     setReservations(newReservations);
   };
 
-  // Fonction pour basculer entre tout cocher et tout décocher
+  // Fonction pour basculer entre tout cocher et tout décocher pour un étudiant
   const handleToggleAll = async (idEtudiant) => {
     const newReservations = new Map(reservations);
     const studentReservations = newReservations.get(idEtudiant) || new Map();
     const totalCells = jours.length * periodes.length;
     
     if (studentReservations.size === totalCells) {
-      // Tout décocher : supprimer toutes les réservations
-      for (const [key, reservationId] of studentReservations.entries()) {
+      // Tout décocher : suppression de toutes les réservations pour cet étudiant
+      for (const [key, reservationObj] of studentReservations.entries()) {
         try {
-          await reservationService.delete(reservationId);
+          await reservationService.delete(reservationObj.idReservation);
           studentReservations.delete(key);
         } catch (error) {
           console.error(`Erreur lors de la suppression de la réservation pour ${key}:`, error);
         }
       }
     } else {
-      // Tout cocher : créer les réservations manquantes
+      // Tout cocher : création des réservations manquantes
       for (const jour of jours) {
         for (const periode of periodes) {
           const key = `${jour.idJour}-${periode.idPeriode}`;
@@ -176,7 +158,7 @@ const Reservation = () => {
                 idJour: jour.idJour,
                 idPeriode: periode.idPeriode,
               });
-              studentReservations.set(key, response.idReservation);
+              studentReservations.set(key, response);
             } catch (error) {
               console.error(`Erreur lors de la création de la réservation pour ${key}:`, error);
             }
@@ -188,14 +170,14 @@ const Reservation = () => {
     setReservations(newReservations);
   };
 
-  // Filtrage des étudiants en fonction du terme recherché (ID, nom, prénom)
+  // Filtrer les étudiants selon la recherche
   const filteredEtudiants = etudiants.filter(etudiant =>
     etudiant.nomEtudiant.toLowerCase().includes(searchTerm.toLowerCase()) ||
     etudiant.prenomEtudiant.toLowerCase().includes(searchTerm.toLowerCase()) ||
     String(etudiant.idEtudiant).includes(searchTerm)
   );
 
-  // Tri des étudiants si une colonne est sélectionnée
+  // Trier les étudiants si sortBy est défini
   const sortedEtudiants = sortBy
     ? [...filteredEtudiants].sort((a, b) => {
         if (typeof a[sortBy] === "string") {
@@ -205,29 +187,24 @@ const Reservation = () => {
       })
     : filteredEtudiants;
 
-  // Gestion de la pagination
+  // Pagination
   const totalPages = Math.ceil(sortedEtudiants.length / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedEtudiants = sortedEtudiants.slice(startIndex, startIndex + rowsPerPage);
 
-  // Fonction pour exporter toutes les données (sans pagination) en PDF
+  // Fonction pour exporter en PDF
   const exportToPDF = () => {
     const pdf = new jsPDF("landscape");
     pdf.text("Liste des Réservations", 14, 10);
 
-    // Définir les colonnes pour le PDF : ID, Nom, Prénom puis une colonne par jour (vous pouvez ajuster selon vos besoins)
     const tableColumn = ["ID", "Nom", "Prénom", ...jours.map(jour => jour.nomJour)];
-
-    // Générer les lignes à partir de toutes les données triées (pas seulement la page courante)
     const tableRows = sortedEtudiants.map(etudiant => {
-      // Pour chaque étudiant, construire une ligne contenant ses infos et les réservations pour chaque jour
       const row = [
         etudiant.idEtudiant,
         etudiant.nomEtudiant,
         etudiant.prenomEtudiant
       ];
       jours.forEach(jour => {
-        // On peut concaténer les réservations de toutes les périodes pour ce jour
         let reservationStr = "";
         periodes.forEach(periode => {
           const key = `${jour.idJour}-${periode.idPeriode}`;
@@ -244,7 +221,6 @@ const Reservation = () => {
       startY: 20,
     });
 
-    // Le nom du fichier peut être personnalisé ici
     pdf.save("Reservations.pdf");
   };
 
@@ -260,7 +236,7 @@ const Reservation = () => {
             <div className="text-red-500 text-center">{error}</div>
           ) : (
             <>
-              {/* Barre de recherche, tri et boutons d'export/impression */}
+              {/* Barre de recherche, tri et export */}
               <div className="flex justify-between items-center mb-4">
                 <input
                   type="text"
@@ -269,7 +245,7 @@ const Reservation = () => {
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
-                    setCurrentPage(1); // Réinitialise la pagination lors d'une recherche
+                    setCurrentPage(1);
                   }}
                 />
                 <div className="flex gap-2">
@@ -307,7 +283,7 @@ const Reservation = () => {
                 </div>
               </div>
 
-              {/* Tableau avec deux lignes d'en-tête */}
+              {/* Tableau des réservations */}
               <table className="min-w-full border border-gray-300">
                 <thead>
                   <tr className="bg-gray-100">
@@ -340,7 +316,6 @@ const Reservation = () => {
                 </thead>
                 <tbody>
                   {paginatedEtudiants.map(etudiant => {
-                    // Récupérer la Map des réservations pour cet étudiant
                     const studentReservations = reservations.get(etudiant.idEtudiant) || new Map();
                     const totalCells = jours.length * periodes.length;
                     const allChecked = studentReservations.size === totalCells;
@@ -360,7 +335,7 @@ const Reservation = () => {
                         {jours.map(jour =>
                           periodes.map(periode => {
                             const key = `${jour.idJour}-${periode.idPeriode}`;
-                            const isReserved = studentReservations.get(key) || false;
+                            const isReserved = studentReservations.get(key) ? true : false;
                             return (
                               <td key={`${etudiant.idEtudiant}-${key}`} className="border px-4 py-2 text-center">
                                 <input
