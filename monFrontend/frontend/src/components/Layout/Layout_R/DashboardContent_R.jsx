@@ -1,6 +1,8 @@
 import React from "react";
 
 const DashboardContent_R= () => {
+  const todayReservations = JSON.parse(localStorage.getItem("todayReservations")) || { lunchCount: 0, dinnerCount: 0 };
+
   return (
     <div className="bg-gray-100 h-full w-full flex justify-center items-center p-4">
       {/* Section des cartes */}
@@ -9,7 +11,9 @@ const DashboardContent_R= () => {
         {/* Cartes réduites */}
         <div className="row-span-2 col-span-2 bg-white shadow-md rounded-lg p-4">
           <h2 className="text-sm font-semibold text-gray-800 mb-2">Nombre de réservations</h2>
-          <p className="text-sm text-gray-600">Contenu de la première carte.</p>
+          <p>Déjeuner : {todayReservations.lunchCount}</p>
+<p>Dîner : {todayReservations.dinnerCount}</p>
+
         </div>
 
         <div className="row-span-2 col-span-2 bg-white shadow-md rounded-lg p-4">
