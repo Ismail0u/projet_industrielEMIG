@@ -76,7 +76,7 @@ const DashboardContent = () => {
 
   // Prix par ticket pour chaque type
   const pricePerTicket = {
-    "Petit-déjeuner": 75,
+    "Petit-déjeuner": 80,
     "Déjeuner": 125,
   };
 

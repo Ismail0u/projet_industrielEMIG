@@ -16,11 +16,21 @@ const Entree = () => {
             try {
                 const data = await StockTableService.get("", { params: { estSortie: 0 } });
                 console.log("Data received in ProduitList:", data);
-                setProduits(data);
+        
+                // Ajouter l'unité au nom du produit si disponible
+                const produitsAvecUnite = data.map(produit => ({
+                    ...produit,
+                    Produit: produit.unite 
+                        ? `${produit.Produit} (${produit.unite})` 
+                        : produit.Produit
+                }));
+        
+                setProduits(produitsAvecUnite);
             } catch (error) {
-                console.error("Erreur lors de la récupération des produits api", error);
+                console.error("Erreur lors de la récupération des produits API", error);
             }
         };
+        
         fetchProduits();
     }, []);
 

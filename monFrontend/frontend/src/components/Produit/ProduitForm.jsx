@@ -10,6 +10,7 @@ const ProduitForm = ({ onProduitAjoute }) => {
     ration: "",
     idFournisseur: "",
     idCategorie: "",
+    unite: "", // Champ "unité"
   });
   const [fournisseurs, setFournisseurs] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -48,58 +49,68 @@ const ProduitForm = ({ onProduitAjoute }) => {
     }
 
     try {
+      const { idProduit, ...dataWithoutId } = formData;
       // 1️⃣ Ajouter le produit
       const produitData = {
-        idProduit: formData.idProduit,
-        nomProduit: formData.nomProduit,
+        nomProduit: dataWithoutId.nomProduit,
         quantiteDisponible: 0,
-        seuilCritique: formData.seuilCritique,
-        ration: formData.ration,
-        idFournisseur: formData.idFournisseur,
-        idCategorie: formData.idCategorie,
+        seuilCritique: dataWithoutId.seuilCritique,
+        ration: dataWithoutId.ration,
+        idFournisseur: dataWithoutId.idFournisseur,
+        idCategorie: dataWithoutId.idCategorie,
+        unite: dataWithoutId.unite, // Champ facultatif unité
       };
       const produit = await produitEnvoieService.create(produitData);
       console.log("Produit ajouté :", produit);
 
+      if (!produit.idProduit) {
+        setError("Erreur: idProduit non retourné. Impossible de continuer.");
+        return;
+      }
+
+      const produitId = produit.idProduit;
+
       // 2️⃣ Déterminer la date et l'id du jour
       const today = new Date();
-      const dateMouvement = today.toISOString().split("T")[0]; // Format YYYY-MM-DD
-      const jourSemaine = today.getDay(); // Dimanche = 0, Lundi = 1, etc.
-      const idJour = jourSemaine === 0 ? 7 : jourSemaine; // Si dimanche (0), alors idJour = 7
+      const dateMouvement = today.toISOString().split("T")[0];
+      const jourSemaine = today.getDay();
+      const idJour = jourSemaine === 0 ? 7 : jourSemaine;
 
-      // 3️⃣ Ajouter le mouvement de stock (entrée par défaut)
+      // 3️⃣ Ajouter le mouvement de stock (entrée)
       const mouvementStockData = {
-        idProduit: produit.idProduit, // ID du produit créé
+        idProduit: produitId,
         quantite: formData.quantiteDisponible,
-        dateMouvement: dateMouvement, // Date du mouvement
-        estSortie: false, // Entrée en stock
-        idRapport: 1, // À modifier si nécessaire
-        idJour: idJour, // ID du jour
+        dateMouvement: dateMouvement,
+        estSortie: false,
+        idRapport: 1,
+        idJour: idJour,
       };
 
       console.log("Données mouvement stock envoyées :", mouvementStockData);
       await mouvementStockService.create(mouvementStockData);
-            // 3️⃣ Ajouter le mouvement de stock (entrée par défaut)
-            const mouvementStockSortieData = {
-              idProduit: produit.idProduit, // ID du produit créé
-              quantite: 0,
-              dateMouvement: dateMouvement, // Date du mouvement
-              estSortie: true, // Sortie en stock
-              idRapport: 1, // À modifier si nécessaire
-              idJour: idJour, // ID du jour
-            };
-          await mouvementStockService.create(mouvementStockSortieData);
+
+      // 4️⃣ Ajouter le mouvement de stock (sortie, ici avec quantité 0)
+      const mouvementStockSortieData = {
+        idProduit: produitId,
+        quantite: 0,
+        dateMouvement: dateMouvement,
+        estSortie: true,
+        idRapport: 1,
+        idJour: idJour,
+      };
+      await mouvementStockService.create(mouvementStockSortieData);
+
       console.log("Mouvement de stock ajouté :", mouvementStockData);
 
       setMessage("Produit ajouté avec succès !");
       setFormData({
-        idProduit: "",
         nomProduit: "",
         quantiteDisponible: "",
         seuilCritique: "",
         ration: "",
         idFournisseur: "",
         idCategorie: "",
+        unite: "", // Réinitialiser le champ unité
       });
 
       if (onProduitAjoute) {
@@ -117,15 +128,6 @@ const ProduitForm = ({ onProduitAjoute }) => {
       {message && <p className="text-green-500">{message}</p>}
       {error && <p className="text-red-500">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="idProduit"
-          value={formData.idProduit}
-          onChange={handleChange}
-          placeholder="ID du produit"
-          className="w-full p-2 border border-gray-300 rounded-lg"
-          required
-        />
         <input
           type="text"
           name="nomProduit"
@@ -162,6 +164,23 @@ const ProduitForm = ({ onProduitAjoute }) => {
           placeholder="Ration"
           className="w-full p-2 border border-gray-300 rounded-lg"
         />
+        {/* Utilisation d'un input avec datalist pour le champ unité */}
+        <input
+          type="text"
+          name="unite"
+          value={formData.unite}
+          onChange={handleChange}
+          placeholder="Unité (ex: kg, boite, unité, litre, paquet ou autre)"
+          className="w-full p-2 border border-gray-300 rounded-lg"
+          list="unit-options"
+        />
+        <datalist id="unit-options">
+          <option value="kg" />
+          <option value="boite" />
+          <option value="unité" />
+          <option value="litre" />
+          <option value="paquet" />
+        </datalist>
         <select
           name="idFournisseur"
           value={formData.idFournisseur}
