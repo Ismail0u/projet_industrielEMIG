@@ -29,7 +29,7 @@ class Lot(models.Model):
     date = models.DateField()
 
     def save(self, *args, **kwargs):
-        prix_par_ticket = {'Petit-déjeuner': 75, 'Déjeuner': 125}
+        prix_par_ticket = {'Petit-déjeuner': 80, 'Déjeuner': 125}
         tickets_par_lot = 14  # Un lot = 14 tickets
         self.montant = self.nombre_lot * tickets_par_lot * prix_par_ticket[self.type_lot]
         super().save(*args, **kwargs)

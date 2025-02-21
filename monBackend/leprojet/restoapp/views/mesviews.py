@@ -64,10 +64,17 @@ from ..serializers import ProduitSerializer, CategorieSerializer, UtilisateurSer
 class ProduitViewSet(BaseViewSet):
     queryset = Produit.objects.all()
     serializer_class = ProduitSerializer
+
+    @action(detail=False, methods=["delete"])
+    def delete_all(self,request):
+        print(f"Requête reçue de l'utilisateur {request.user}")
+        Produit.objects.all().delete()
+        return Response({"message": "Tous les produits ont été supprimés"}, status=status.HTTP_204_NO_CONTENT)
     
 class ProduitEnvoieViewSet(BaseViewSet):
     queryset = Produit.objects.all()
     serializer_class = ProduitEnvoieSerializer
+
 
 class CategorieViewSet(BaseViewSet):
     queryset = Categorie.objects.all()

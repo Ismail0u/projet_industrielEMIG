@@ -67,7 +67,7 @@ const RecuForm = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
             const recuData = {
                 dateRecu,
                 quantite: parseFloat(quantite),
-                idProduit,
+                idProduit: parseInt(idProduit, 10),
                 idFournisseur,
             };
 

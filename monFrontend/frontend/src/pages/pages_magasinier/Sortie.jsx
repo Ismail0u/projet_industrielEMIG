@@ -12,13 +12,22 @@ const Sortie = () => {
         // Charger les données de l'API
         const fetchProduits = async () => {
             try {
-              const response = await StockTableService.get("?estSortie=1");
-
-                setProduits(response);
+                const response = await StockTableService.get("?estSortie=1");
+        
+                // Ajouter l'unité si disponible
+                const produitsAvecUnite = response.map(produit => ({
+                    ...produit,
+                    Produit: produit.unite 
+                        ? `${produit.Produit} (${produit.unite})` 
+                        : produit.Produit
+                }));
+        
+                setProduits(produitsAvecUnite);
             } catch (error) {
                 console.error("Erreur lors du chargement des produits :", error);
             }
         };
+        
 
         fetchProduits();
     }, []);

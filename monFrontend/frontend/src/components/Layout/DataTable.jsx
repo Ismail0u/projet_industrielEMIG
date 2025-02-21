@@ -146,14 +146,14 @@ const DataTable = ({ data, editableColumns, rowsPerPage, onUpdateStock,pdfFileNa
           <thead>
             <tr className="bg-gray-100">
               {columns.map((col) => (
-                <th key={col} className="border p-2 text-left">{col}</th>
+                <th key={col} className="border p-2 text-center">{col}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {paginatedData.length > 0 ? (
               paginatedData.map((item, rowIndex) => (
-                <tr key={rowIndex} className="border hover:bg-gray-50">
+                <tr key={rowIndex} className="border text-center hover:bg-gray-50">
                   {columns.map((col) => {
                     const isEditable = editableColumns.includes(col);
                     return (

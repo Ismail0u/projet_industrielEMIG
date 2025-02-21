@@ -8,8 +8,8 @@ class Produit(models.Model):
     """
     Modèle représentant un produit stocké.
     """
-    idProduit = models.CharField(db_column='idProduit', primary_key=True, max_length=5)
-    nomProduit = models.CharField(db_column='nomProduit', max_length=25)
+    idProduit = models.AutoField(primary_key=True)
+    nomProduit = models.CharField(db_column='nomProduit', max_length=100)
     quantiteDisponible = models.DecimalField(db_column='quantiteDisponible', max_digits=10, decimal_places=2)
     seuilCritique = models.DecimalField(db_column='seuilCritique', max_digits=10, decimal_places=2)
     ration = models.FloatField(blank=True, null=True)
@@ -17,7 +17,7 @@ class Produit(models.Model):
     idFournisseur = models.ForeignKey(Fournisseur, models.DO_NOTHING, db_column='idFournisseur')
     idCategorie = models.ForeignKey(Categorie, models.DO_NOTHING, db_column='idCategorie')
     dateAjout = models.DateTimeField(db_column='dateAjout', blank=True, null=True)
-
+    unite = models.CharField(db_column='unite', max_length=20, blank=True, null=True)
     def est_critique(self):
         """ Vérifie si la quantité disponible atteint le seuil critique. """
         return self.quantiteDisponible <= self.seuilCritique

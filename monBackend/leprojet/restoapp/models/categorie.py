@@ -5,7 +5,7 @@ class Categorie(models.Model):
     Modèle représentant une catégorie de produits.
     """
     idCategorie = models.IntegerField(db_column='idCategorie', primary_key=True)  
-    nomCategorie = models.CharField(db_column='nomCategorie', max_length=25)  
+    nomCategorie = models.CharField(db_column='nomCategorie', max_length=100)  
 
     
     @property

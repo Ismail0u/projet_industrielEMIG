@@ -6,7 +6,6 @@ export const menuItems = [
     { icon: <ClipboardList size={20} />, name: "Stock", path: "/stock" },
     { icon: <ClipboardCopy size={20} />, name: "Entrées", path: "/entree" },
     { icon: <ClipboardPaste size={20} />, name: "Sorties", path: "/sortie" },
-    {icon: <ClipboardPlus size={20} />, name: "Ajouter Produit" , path: "/produit"},
     { icon: <PackagePlus size={20} />, name: "Fournisseurs", path: "/fournisseurs" },
     { icon: <ReceiptText size={20} />, name: "Historique reçus", path: "/reculist"},
 ];
