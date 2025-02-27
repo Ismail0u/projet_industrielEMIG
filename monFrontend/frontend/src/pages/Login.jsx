@@ -1,96 +1,57 @@
-import React, { useState } from "react";
-import { AiOutlinePhone, AiOutlineUser, AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import BackgroundImage from "../assets/images/background.png"; 
+// src/pages/Login.jsx
+import { useState, useContext } from 'react';
+import { AuthContext } from '../components/Auth/AuthForm';
+import { useNavigate } from 'react-router-dom';
+
 const Login = () => {
-  const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const { handleLogin } = useContext(AuthContext);
+    const navigate = useNavigate();
 
-  return (
-    <div
-    className="relative flex items-center justify-center min-h-screen bg-blue-600 overflow-hidden"
-  >  
-      {/* Login card */}
-      <div className="z-10 bg-white rounded-lg shadow-md w-full max-w-sm p-6">
-        <h2 className="text-xl font-roboto font-semibold text-center text-blue-600 mb-6">
-          Se connecter
-        </h2>
-        <form>
-          {/* Phone number */}
-          <div className="mb-4">
-            <label
-              htmlFor="phone"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Numéro de téléphone
-            </label>
-            <div className="flex items-center border rounded-md mt-1 px-3 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
-              <AiOutlinePhone className="text-gray-400 text-lg mr-2" />
-              <input
-                type="text"
-                id="phone"
-                placeholder="+227"
-                className="w-full border-none focus:outline-none focus:ring-0 sm:text-sm"
-              />
-            </div>
-          </div>
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+          await handleLogin(email, password);  // Connexion de l'utilisateur
+      } catch (err) {
+          setError('Email ou mot de passe incorrect');  // Gestion de l'erreur
+      }
+  };
+  
 
-          {/* Username */}
-          <div className="mb-4">
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Nom d'utilisateur
-            </label>
-            <div className="flex items-center border rounded-md mt-1 px-3 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
-              <AiOutlineUser className="text-gray-400 text-lg mr-2" />
-              <input
-                type="text"
-                id="username"
-                placeholder=""
-                className="w-full border-none focus:outline-none focus:ring-0 sm:text-sm"
-              />
+    return (
+        <div className="flex justify-center items-center h-screen bg-gray-100">
+            <div className="bg-white p-8 rounded shadow-md w-96">
+                <h2 className="text-2xl font-bold mb-4 text-center">Connexion</h2>
+                {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+                <form onSubmit={handleSubmit}>
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full p-2 border rounded mb-4"
+                        required
+                    />
+                    <input
+                        type="password"
+                        placeholder="Mot de passe"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full p-2 border rounded mb-4"
+                        required
+                    />
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                    >
+                        Se connecter
+                    </button>
+                </form>
             </div>
-          </div>
-
-          {/* Password */}
-          <div className="mb-4">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Mot de passe
-            </label>
-            <div className="flex items-center border rounded-md mt-1 px-3 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                placeholder=""
-                className="w-full border-none focus:outline-none focus:ring-0 sm:text-sm"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-gray-400 text-lg focus:outline-none"
-              >
-                {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
-              </button>
-            </div>
-            <div className="text-right text-sm text-blue-600 mt-1">
-              <a href="#">Mot de passe oublié ?</a>
-            </div>
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
-          >
-            Se connecter
-          </button>
-        </form>
-      </div>
-    </div>
-  );
+        </div>
+    );
 };
 
 export default Login;

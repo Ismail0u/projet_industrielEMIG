@@ -1,6 +1,11 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
+from dj_rest_auth.registration.views import SocialLoginView
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter
 
 
 router = DefaultRouter()
@@ -36,7 +41,14 @@ router.register(r'argent-remis', views.ArgentRemisViewSet, basename='argent-remi
 urlpatterns = [
     path('api/', include(router.urls)),
     path('', include(router.urls)),
-    path('login/', views.LoginView.as_view(), name='login'), # Keep your login view separate
+    path('accounts/', include('allauth.urls')),  # Pour gérer l'authentification
+    path('auth/', include('dj_rest_auth.urls')),  # Pour gérer les API d'authentification
+    path('auth/registration/', include('dj_rest_auth.registration.urls')),  # Pour gérer l'inscription
+    path('auth/google/login/', GoogleLogin.as_view(), name='google_login'),
+    path('login/', views.LoginView.as_view(), name='login'),
+    path('me/', views.UserProfileView.as_view(), name='user-profile'),
+    path('user/', views.UserView.as_view(), name='user-info'),
+    path('logout/', views.logout_view, name='logout'),
     path('mouvements-stock-table/', views.MouvementStockTableView.as_view(), name="mouvements_stock_table"),
     path('mouvement-stock-update/', views.update_mouvement_stock, name="mouvement_stock_update"),
     path('sortie-stock/', views.sortie_stock, name="sortie_stock"),

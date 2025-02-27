@@ -1,24 +1,32 @@
-
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import check_password
 from rest_framework import serializers
-from django.contrib.auth import authenticate
+from ..models.utilisateur import Utilisateur
 
+User = get_user_model()
 
 class LoginSerializer(serializers.Serializer):
-    email = serializers.CharField(max_length=100)
-    motpasse = serializers.CharField(max_length=255)
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
 
     def validate(self, data):
-        email = data.get("email")
-        motpasse = data.get("motpasse")
+        email = data.get("email").strip().lower()  # Normalisation
+        password = data.get("password")
 
-        # Utiliser l'email comme username pour l'authentification
-        user = authenticate(username=email, motpasse=motpasse)
+        print(f"Tentative de connexion avec email : {email}")
 
-        if user is None:
-            raise serializers.ValidationError("Unable to log in with provided credentials.")
+        user = Utilisateur.objects.filter(email=email).first()
+        if not user:
+            print("🚨 Utilisateur introuvable en Django")
+            raise serializers.ValidationError("Email ou mot de passe incorrect")
 
-        if not user.is_active:
-            raise serializers.ValidationError("User account is disabled.")
+        if not user.check_password(password):
+            print("🚨 Mot de passe incorrect")
+            raise serializers.ValidationError("Email ou mot de passe incorrect")
 
-        data["user"] = user
-        return data
+        print("✅ Connexion validée")
+        return {
+            "user": user, 
+            "email": email,  # Ajout des données pour être accessibles dans `validated_data`
+            "password": password
+        }

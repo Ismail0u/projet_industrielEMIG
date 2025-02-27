@@ -105,6 +105,9 @@ export const StockTableService = new ApiService('mouvements-stock-table');
 export const StockUpdateService = (produit, jour, quantite) => {
   return axios.post(`${API_URL}/mouvement-stock-update/`, { produit, jour, quantite });
 };
+// Ajoute cette méthode dans ApiService
+
+
 export const sortieStock = async (produit, jour, quantite) => {
   try {
       const response = await axios.post('http://127.0.0.1:8000/api/sortie-stock/', {
