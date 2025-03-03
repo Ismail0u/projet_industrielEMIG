@@ -24,10 +24,11 @@ class Jour(models.Model):
             return 0
 
         lendemain = timezone.now().date() + timezone.timedelta(days=1)
+        print(f"Vérification des réservations pour {lendemain} et période {periode_id}")
         count = Reservation.objects.filter(dateReservation=lendemain, idJour=self, idPeriode=periode).count()
-        
         print(f"Réservations pour {lendemain} : {count}")
         return count
+
 
     class Meta:
         managed = False

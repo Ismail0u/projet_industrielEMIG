@@ -7,6 +7,9 @@ import Sidebar from "../../components/Layout/Sidebar";
 import Header from "../../components/Layout/Header";
 import { menuItems, userOptions } from "../../components/Layout/Layout_R/SidebarData_R";
 import { etudiantService, jourService, periodeService, reservationService } from "../../services/apiService";
+import Table from "../../components/Layout/Layout_R/Table";
+import SearchSortExport from "../../components/Layout/Layout_R/SearchSortExport";
+import Pagination from "../../components/Layout/Layout_R/Pagination";
 
 const Reservation = () => {
   // États pour les données
@@ -40,26 +43,42 @@ const Reservation = () => {
         periodeService.get(),
         reservationService.get()
       ]);
-
+  
       setEtudiants(etudiantRes);
       setJours(jourRes);
       setPeriodes(periodeRes);
-
-      // Création de la Map initiale de réservations
+  
+      // 1️⃣ Récupérer la date de début et de fin de la semaine actuelle
+      const startOfWeek = getWeekStartDate(); // Date du lundi de la semaine
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6); // Dimanche de la semaine
+  
+      console.log("Début de la semaine :", startOfWeek.toISOString());
+      console.log("Fin de la semaine :", endOfWeek.toISOString());
+  
+      // 2️⃣ Filtrer les réservations pour ne garder que celles de cette semaine
+      const filteredReservations = reservationRes.filter(reservation => {
+        const resDate = new Date(reservation.dateReservation);
+        return resDate >= startOfWeek && resDate <= endOfWeek;
+      });
+  
+      console.log("Réservations filtrées :", filteredReservations);
+  
+      // 3️⃣ Créer la Map initiale de réservations
       const initialReservations = new Map();
       etudiantRes.forEach(etudiant => {
         initialReservations.set(etudiant.idEtudiant, new Map());
       });
-
+  
       // Stocker l'objet réservation complet pour avoir accès à dateReservation
-      reservationRes.forEach(reservation => {
+      filteredReservations.forEach(reservation => {
         const { idReservation, idEtudiant, idJour, idPeriode } = reservation;
         const studentReservations = initialReservations.get(idEtudiant) || new Map();
         const key = `${idJour}-${idPeriode}`;
         studentReservations.set(key, reservation);
         initialReservations.set(idEtudiant, studentReservations);
       });
-
+  
       setReservations(initialReservations);
     } catch (err) {
       console.error("Erreur lors du chargement des données :", err);
@@ -68,14 +87,17 @@ const Reservation = () => {
       setLoading(false);
     }
   };
+  
   const getWeekStartDate = () => {
     const today = new Date();
-    const dayOfWeek = today.getDay();
-    const diff = today.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+    const dayOfWeek = today.getDay(); // 0 = Dimanche, 6 = Samedi
+    const diff = today.getDate() - dayOfWeek + (dayOfWeek === 0 ? 1 : 0); // Si dimanche, commencer lundi prochain
+  
     return new Date(today.setDate(diff));
   };
+  
 
-  const getReservationDate = (dayOffset) => {
+ const getReservationDate = (dayOffset) => {
     const weekStart = getWeekStartDate();
     const reservationDate = new Date(weekStart);
     reservationDate.setDate(weekStart.getDate() + dayOffset);
@@ -83,17 +105,17 @@ const Reservation = () => {
   };
 
   const handleKeyDown = (event, idEtudiant, idJour, idPeriode) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      handleReservationToggle(idEtudiant, idJour, idPeriode);
+    if (event.key === "Enter" || event.key === " ") { // Vérifie si la touche est "Enter" ou "Espace"
+      event.preventDefault(); // Empêche le comportement par défaut
+      handleReservationToggle(idEtudiant, idJour, idPeriode); // Bascule la réservation
     }
-  };
+  };  
 
   const handleReservationToggle = async (idEtudiant, idJour, idPeriode) => {
     const newReservations = new Map(reservations);
     const studentReservations = newReservations.get(idEtudiant) || new Map();
     const key = `${idJour}-${idPeriode}`;
-    const reservationId = studentReservations.get(key);
+    const reservationObj = studentReservations.get(key);
 
     const jourIndex = jours.findIndex(j => j.idJour === idJour);
     if (jourIndex === -1) return;
@@ -236,152 +258,28 @@ const Reservation = () => {
             <div className="text-red-500 text-center">{error}</div>
           ) : (
             <>
-              {/* Barre de recherche, tri et export */}
-              <div className="flex justify-between items-center mb-4">
-                <input
-                  type="text"
-                  placeholder="Rechercher..."
-                  className="p-2 border rounded-md w-1/3"
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                />
-                <div className="flex gap-2">
-                  <div className="relative">
-                    <button
-                      className="flex items-center gap-2 px-4 py-2 bg-gray-200 rounded-md"
-                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    >
-                      Trier par
-                      <ChevronDown className="w-4 h-4" />
-                    </button>
-                    {isDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-md">
-                        {["idEtudiant", "nomEtudiant", "prenomEtudiant"].map((col) => (
-                          <button
-                            key={col}
-                            className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                            onClick={() => {
-                              setSortBy(col);
-                              setIsDropdownOpen(false);
-                            }}
-                          >
-                            {col}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <button
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md"
-                    onClick={exportToPDF}
-                  >
-                    Exporter en PDF
-                  </button>
-                </div>
-              </div>
+              <SearchSortExport
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                setSortBy={setSortBy}
+                exportToPDF={exportToPDF}
+              />
+              <Table 
+                etudiants={paginatedEtudiants}
+                jours={jours}
+                periodes={periodes}
+                reservations={reservations}
+                handleReservationToggle={handleReservationToggle}
+                handleToggleAll={handleToggleAll}
+                handleKeyDown={handleKeyDown}
+                getReservationDate={getReservationDate} // 🔥 Ajout de cette ligne
+              />
 
-              {/* Tableau des réservations */}
-              <table className="min-w-full border border-gray-300">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th rowSpan="2" className="border px-4 py-2">ID</th>
-                    <th rowSpan="2" className="border px-4 py-2">Nom</th>
-                    <th rowSpan="2" className="border px-4 py-2">Prénom</th>
-                    <th rowSpan="2" className="border px-4 py-2">Tout cocher</th>
-                    {jours.map(jour => (
-                      <th
-                        key={jour.idJour}
-                        colSpan={periodes.length}
-                        className="border px-4 py-2 text-center"
-                      >
-                        {jour.nomJour}
-                      </th>
-                    ))}
-                  </tr>
-                  <tr className="bg-gray-100">
-                    {jours.map(jour =>
-                      periodes.map(periode => (
-                        <th
-                          key={`${jour.idJour}-${periode.idPeriode}`}
-                          className="border px-4 py-2 text-center"
-                        >
-                          {periode.idPeriode}
-                        </th>
-                      ))
-                    )}
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginatedEtudiants.map(etudiant => {
-                    const studentReservations = reservations.get(etudiant.idEtudiant) || new Map();
-                    const totalCells = jours.length * periodes.length;
-                    const allChecked = studentReservations.size === totalCells;
-                    return (
-                      <tr key={etudiant.idEtudiant}>
-                        <td className="border px-4 py-2">{etudiant.idEtudiant}</td>
-                        <td className="border px-4 py-2">{etudiant.nomEtudiant}</td>
-                        <td className="border px-4 py-2">{etudiant.prenomEtudiant}</td>
-                        <td className="border px-4 py-2 text-center">
-                          <button
-                            className={`p-2 rounded ${allChecked ? "bg-red-500" : "bg-green-500"}`}
-                            onClick={() => handleToggleAll(etudiant.idEtudiant)}
-                          >
-                            {allChecked ? <X size={8} color="white" /> : <Check size={8} color="white" />}
-                          </button>
-                        </td>
-                        {jours.map(jour =>
-                          periodes.map(periode => {
-                            const key = `${jour.idJour}-${periode.idPeriode}`;
-                            const isReserved = studentReservations.get(key) ? true : false;
-                            return (
-                              <td key={`${etudiant.idEtudiant}-${key}`} className="border px-4 py-2 text-center">
-                                <input
-                                  type="checkbox"
-                                  checked={isReserved}
-                                  onChange={() =>
-                                    handleReservationToggle(etudiant.idEtudiant, jour.idJour, periode.idPeriode)
-                                  }
-                                  onKeyDown={(event) =>
-                                    handleKeyDown(event, etudiant.idEtudiant, jour.idJour, periode.idPeriode)
-                                  }
-                                />
-                              </td>
-                            );
-                          })
-                        )}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex justify-between items-center mt-4 border-t pt-2">
-                  <span>
-                    Page {currentPage} sur {totalPages}
-                  </span>
-                  <div className="flex gap-2">
-                    <button
-                      className={`px-3 py-1 rounded ${currentPage === 1 ? "bg-gray-300" : "bg-gray-200"}`}
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                      disabled={currentPage === 1}
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
-                    <button
-                      className={`px-3 py-1 rounded ${currentPage === totalPages ? "bg-gray-300" : "bg-gray-200"}`}
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                      disabled={currentPage === totalPages}
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              )}
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+              />
             </>
           )}
         </div>

@@ -1,7 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-<<<<<<< HEAD
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import authenticate
@@ -63,22 +62,3 @@ def logout_view(request):
     except Exception as e:
         return Response({'error': 'Échec de la déconnexion'}, status=status.HTTP_400_BAD_REQUEST)
 
-=======
-from ..serializers.LoginSerializer import LoginSerializer
-from ..serializers.UtilisateurSerializers import UtilisateurSerializer
-
-class LoginView(APIView):
-    """
-    Point d'entrée API qui permet aux utilisateurs de se connecter.
-    """
-    serializer_class = LoginSerializer
-
-    def post(self, request, *args, **kwargs):
-        """
-        Connecte un utilisateur.
-        """
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        return Response({"user": UtilisateurSerializer(user).data})
->>>>>>> a1f1467561cb07fd5c6fbfb02d33afbbdcaa5fa3
