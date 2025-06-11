@@ -1,12 +1,9 @@
 import React from "react";
 import { Check, X } from "lucide-react";
 
-
 const Table = ({ etudiants, jours, periodes, reservations, handleReservationToggle, handleToggleAll, handleKeyDown, getReservationDate }) => {
-  // Code du composant Table...
   const today = new Date();
-  const resDate = new Date(getReservationDate(jours.findIndex(j => j.idJour === jours.idJour)));
-  const isPast = resDate < today;
+
   return (
     <table className="min-w-full border border-gray-300">
       <thead>
@@ -36,6 +33,7 @@ const Table = ({ etudiants, jours, periodes, reservations, handleReservationTogg
           const studentReservations = reservations.get(etudiant.idEtudiant) || new Map();
           const totalCells = jours.length * periodes.length;
           const allChecked = studentReservations.size === totalCells;
+
           return (
             <tr key={etudiant.idEtudiant}>
               <td className="border px-4 py-2">{etudiant.idEtudiant}</td>
@@ -46,13 +44,18 @@ const Table = ({ etudiants, jours, periodes, reservations, handleReservationTogg
                   className={`p-2 rounded ${allChecked ? "bg-red-500" : "bg-green-500"}`}
                   onClick={() => handleToggleAll(etudiant.idEtudiant)}
                 >
-                  {allChecked ? <X size={8} color="white" /> : <Check size={8} color="white" />}
+                  {allChecked ? <X size={14} color="white" /> : <Check size={14} color="white" />}
                 </button>
               </td>
               {jours.map(jour =>
                 periodes.map(periode => {
                   const key = `${jour.idJour}-${periode.idPeriode}`;
-                  const isReserved = studentReservations.get(key) ? true : false;
+                  const isReserved = studentReservations.get(key) || false;
+
+                  // Calcul de la date de réservation pour chaque jour
+                  const resDate = new Date(getReservationDate(jour.idJour));
+                  const isPast = resDate < today;
+
                   return (
                     <td key={`${etudiant.idEtudiant}-${key}`} className="border px-4 py-2 text-center">
                       <input
@@ -63,9 +66,7 @@ const Table = ({ etudiants, jours, periodes, reservations, handleReservationTogg
                         tabIndex={0}
                         disabled={isPast} // Désactive la case si le jour est déjà passé
                       />
-
                     </td>
-
                   );
                 })
               )}
