@@ -24,38 +24,16 @@ const Stock = () => {
       console.log("Données reçues depuis l'API :", fetchedData);
       
       // Mise en forme des données pour DataTable
-      const mappedData = fetchedData.map((item) => {
-        // Conversion des valeurs en nombres pour la comparaison
-        const quantite = parseFloat(item.quantiteDisponible);
-        const seuil = parseFloat(item.seuilCritique);
-        let statusText = "";
-        let statusColor = "";
-
-        if (quantite === 0) {
-          statusText = "En rupture";
-          statusColor = "text-red-600"; // Rouge
-        } else if (quantite <= seuil) {
-          statusText = "Seuil critique";
-          statusColor = "text-yellow-600"; // Jaune
-        } else {
-          statusText = "En Stock";
-          statusColor = "text-green-600"; // Vert
-        }
-
-        return {
-          Produit: item.unite ? `${item.nomProduit} (${item.unite})` : item.nomProduit,
-          Quantité: item.quantiteDisponible,
-          "Seuil Critique": item.seuilCritique,
-          Ration: item.ration,
-          Catégorie: item.nomCategorie || "N/A",
-          // Affichage du statut avec la couleur correspondante
-          Statut: (
-            <span className={statusColor}>
-              {statusText}
-            </span>
-          ),
-        };
-      });
+      const mappedData = fetchedData.map((item) => ({
+        Produit: item.nomProduit,
+        Quantité: item.quantiteDisponible,
+        "Seuil Critique": item.seuilCritique,
+        Ration: item.ration,
+        Catégorie: item.nomCategorie || "N/A",
+        Statut:
+          item.etat
+      }));
+      
       setData(mappedData);
       // Calcul du nombre de produits en seuil critique
       setCriticalProducts(fetchedData.filter((item) => item.is_critical).length);
@@ -78,7 +56,7 @@ const Stock = () => {
 
       {/* Contenu principal */}
       <div className="flex-1 flex flex-col h-screen">
-        <Header h_title="Stock" h_role="Magasinier" h_user="Soumana" />
+        <Header h_title="Stock" h_role="Magasinier" h_user="Ousseini" />
 
         <div className="flex-1 p-4 bg-gray-100">
           {/* Cartes récapitulatives */}

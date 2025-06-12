@@ -98,7 +98,7 @@ const Sortie = () => {
             {/* Contenu principal */}
             <div className="flex-1 flex flex-col h-screen">
                 {/* En-tête */}
-                <Header h_title="Sortie de Stock" h_role="Magasinier" h_user="Soumana" />
+                <Header h_title="Sortie de Stock" h_role="Magasinier" h_user="Ousseini" />
 
                 {/* Contenu du tableau */}
                 <div className="flex-1 overflow-hidden p-1">

@@ -13,7 +13,7 @@ const ListeEtudiant = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen">
         {/* Header */}
-        <Header h_title="Liste des étudiants" h_role="Administrateur" h_user="Soumana" />
+        <Header h_title="Liste des étudiants" h_role="Vendeur de ticket" h_user="Soumana" />
 
         {/* Contenu principal : le formulaire / tableau d'étudiants */}
         <div className="flex-1 overflow-auto p-4">

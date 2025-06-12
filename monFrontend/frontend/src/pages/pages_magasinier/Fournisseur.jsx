@@ -73,7 +73,7 @@ const Fournisseurs = () => {
 
       {/* Contenu principal */}
       <div className="flex-1 flex flex-col h-screen">
-        <Header h_title="Fournisseur" h_role="Magasinier" h_user="Soumana" />
+        <Header h_title="Fournisseur" h_role="Magasinier" h_user="Ousseini" />
 
         <div className="flex-1 overflow-hidden p-1">
           {/* Affichage du tableau */}

@@ -100,7 +100,7 @@ const RecuForm = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
         doc.text("École des Mines, de l'Industrie et de la Géologie (EMIG)", 50, 25);
 
         doc.setFontSize(12);
-        doc.text("Reçu de Stock", 14, 40);
+        doc.text("Reçu", 14, 40);
 
         doc.autoTable({
             startY: 50,
